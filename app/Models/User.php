@@ -43,4 +43,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+      protected $table = 'users';
+    protected $primaryKey = 'id_user';   // 👈 Wajib
+    public $incrementing = true;
+    protected $keyType = 'int';
+
 }

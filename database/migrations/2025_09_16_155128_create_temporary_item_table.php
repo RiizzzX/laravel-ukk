@@ -8,17 +8,12 @@ use Illuminate\Support\Facades\DB;
 return new class extends Migration {
     public function up(): void {
         Schema::create('temporary_item', function (Blueprint $table) {
-            $table->id('id_temp');
-            $table->string('nama_item');
-            $table->integer('jumlah')->default(0);
-            $table->timestamps();
-        });
-
-        // Default temporary data
-        DB::table('temporary_item')->insert([
-            ['nama_item' => 'Whiteboard', 'jumlah' => 2, 'created_at' => now(), 'updated_at' => now()],
-            ['nama_item' => 'Spidol', 'jumlah' => 20, 'created_at' => now(), 'updated_at' => now()],
-        ]);
+    $table->id('id_temporary');
+    $table->foreignId('id_item')->nullable()->constrained('items','id_item')->nullOnDelete();
+    $table->string('nama_barang_baru', 50)->nullable();
+    $table->string('lokasi_barang_baru', 50)->nullable();
+    $table->timestamps();
+});
     }
 
     public function down(): void {

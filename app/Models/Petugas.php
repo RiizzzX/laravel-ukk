@@ -8,13 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Petugas extends Model
 {
     use HasFactory;
+protected $table = 'petugas';
+    protected $primaryKey = 'id_petugas';
+    public $incrementing = true;
+    protected $keyType = 'int';
 
-    protected $table = 'petugas';     // pastikan sama dengan nama tabel di DB
-    protected $primaryKey = 'id_petugas'; // karena PK kamu bukan 'id' tapi 'id_petugas'
-    public $timestamps = true;
-
-    protected $fillable = [
-        'nama_petugas',
-        'jabatan',
-    ];
+    protected $fillable = ['nama','gender','telp'];
 }

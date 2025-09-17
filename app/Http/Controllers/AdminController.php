@@ -21,6 +21,7 @@ class AdminController extends Controller
             'countItems'     => Item::count(),
             'countLokasi'    => Lokasi::count(),
             'countPengaduan' => Pengaduan::count(),
+            'latestPengaduan' => Pengaduan::with('user','item')->latest()->take(5)->get(),
         ]);
     }
 
