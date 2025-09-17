@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -6,14 +7,14 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void {
         Schema::create('users', function (Blueprint $table) {
-            $table->id('id_user'); // primary key
-            $table->string('username', 200)->unique();
-            $table->string('password', 200);
-            $table->string('nama_pengguna', 200);
-            $table->enum('role', ['admin', 'petugas', 'guru', 'siswa'])->default('siswa');
+            $table->bigIncrements('id_user');
+            $table->string('username')->unique();
+            $table->string('password');
+            $table->enum('role', ['admin', 'petugas', 'pengguna'])->default('pengguna');
             $table->timestamps();
         });
     }
+
     public function down(): void {
         Schema::dropIfExists('users');
     }

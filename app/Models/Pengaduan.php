@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
+use App\Models\Item;
+use App\Models\Lokasi;
 
 class Pengaduan extends Model
 {
@@ -14,7 +17,7 @@ class Pengaduan extends Model
     protected $fillable = [
         'nama_pengaduan',
         'deskripsi',
-        'lokasi',
+        'id_lokasi', // <-- ganti dari 'lokasi' ke 'id_lokasi'
         'foto',
         'status',
         'id_user',
@@ -30,13 +33,13 @@ class Pengaduan extends Model
         return $this->belongsTo(User::class, 'id_user', 'id_user');
     }
 
-    public function petugas()
-    {
-        return $this->belongsTo(Petugas::class, 'id_petugas', 'id_petugas');
-    }
-
     public function item()
     {
         return $this->belongsTo(Item::class, 'id_item', 'id_item');
+    }
+
+    public function lokasi()
+    {
+        return $this->belongsTo(Lokasi::class, 'id_lokasi', 'id_lokasi');
     }
 }

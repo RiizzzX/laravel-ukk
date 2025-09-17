@@ -9,42 +9,31 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Tampilkan form register
-     */
-    public function create(): View
+    public function create()
     {
         return view('auth.register');
     }
 
-    /**
-     * Proses registrasi user baru
-     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'username' => ['required', 'string', 'max:50', 'unique:users,username'],
-            'name'     => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', 'min:6'],
         ]);
 
         $user = User::create([
             'username' => $request->username,
-            'name'     => $request->name,
             'password' => Hash::make($request->password),
-            'role'     => 'pengguna', // default role
+            'role' => 'pengguna', // default
         ]);
 
         event(new Registered($user));
 
-        // langsung login
         Auth::login($user);
 
-        // redirect sesuai role
         return redirect('/redirect-by-role');
     }
 }

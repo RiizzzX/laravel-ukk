@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->text('deskripsi');
             $table->enum('status',['pending','proses','selesai'])->default('pending');
             $table->timestamps();
-
+ $table->string('foto')->nullable(); // ✅ kolom foto untuk bukti
             $table->foreign('id_user')->references('id_user')->on('users')->cascadeOnDelete();
             $table->foreign('id_petugas')->references('id_petugas')->on('petugas')->nullOnDelete();
             $table->foreign('id_item')->references('id_item')->on('items')->cascadeOnDelete();
