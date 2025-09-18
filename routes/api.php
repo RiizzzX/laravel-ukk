@@ -1,16 +1,21 @@
 <?php
+
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\PengaduanController;
 
-Route::post('register', [AuthController::class, 'register']);
-Route::post('login', [AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login',    [AuthController::class, 'login']);
+Route::post('/register', [RegisteredUserController::class, 'store']);
+Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('logout', [AuthController::class, 'logout']);
-    Route::get('profile', [ProfileController::class, 'show']);
-    Route::put('profile', [ProfileController::class, 'update']);
+    Route::get('/me',                 [AuthController::class, 'me']);
+    Route::put('/profile',            [AuthController::class, 'updateProfile']);
 
-    Route::get('/pengaduan', [PengaduanController::class, 'index']);
-    Route::post('/pengaduan', [PengaduanController::class, 'store']);
+    Route::post('/pengaduan',         [PengaduanController::class, 'store']);
+    Route::get('/pengaduan/history',  [PengaduanController::class, 'history']);
+    // optional: route show single pengaduan
+    Route::get('/pengaduan/{id}',     [PengaduanController::class, 'show']);
 });

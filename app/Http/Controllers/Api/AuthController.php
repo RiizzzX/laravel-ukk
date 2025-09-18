@@ -10,53 +10,85 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    // Register (username,email optional, we require username+password)
     public function register(Request $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:100',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6|confirmed',
-            'role' => 'in:admin,petugas,pengguna'
+        $data = $request->validate([
+            'username' => 'required|string|unique:users,username',
+            'email'    => 'nullable|email|unique:users,email',
+            'password' => 'required|string|min:6|confirmed', // expect password_confirmation
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'role' => $request->role ?? 'pengguna',
-            'password' => Hash::make($request->password),
+            'username' => $data['username'],
+            'email'    => $data['email'] ?? null,
+            'password' => Hash::make($data['password']),
+            'role'     => 'pengguna',
         ]);
 
-        return response()->json(['message' => 'User  registered successfully'], 201);
+        $token = $user->createToken('api-token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'Register berhasil',
+            'user'    => $user,
+            'token'   => $token
+        ], 201);
     }
 
+    // Login (username or email)
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
+            'username' => 'nullable|string',
+            'email'    => 'nullable|email',
+            'password' => 'required|string'
         ]);
 
-        $user = User::where('email', $request->email)->first();
-
-        if (! $user || ! Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['Email atau password salah.'],
-            ]);
+        // try username first, then email
+        $user = null;
+        if ($request->username) {
+            $user = User::where('username', $request->username)->first();
+        } elseif ($request->email) {
+            $user = User::where('email', $request->email)->first();
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            throw ValidationException::withMessages(['credentials' => ['Login failed: invalid credentials']]);
+        }
+
+        // delete old tokens optionally: $user->tokens()->delete();
+        $token = $user->createToken('api-token')->plainTextToken;
 
         return response()->json([
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-            'user' => $user,
+            'message' => 'Login berhasil',
+            'user'    => $user,
+            'token'   => $token
         ]);
     }
 
-    public function logout(Request $request)
+    // get authenticated user
+    public function me(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        return response()->json($request->user());
+    }
 
-        return response()->json(['message' => 'Logged out']);
+    // update profile (username/email/password)
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+
+        $data = $request->validate([
+            'username' => 'nullable|string|unique:users,username,' . $user->id_user . ',id_user',
+            'email'    => 'nullable|email|unique:users,email,' . $user->id_user . ',id_user',
+            'password' => 'nullable|string|min:6|confirmed',
+        ]);
+
+        if (isset($data['username'])) $user->username = $data['username'];
+        if (array_key_exists('email', $data)) $user->email = $data['email'];
+        if (!empty($data['password'])) $user->password = Hash::make($data['password']);
+
+        $user->save();
+
+        return response()->json(['message' => 'Profil diperbarui', 'user' => $user]);
     }
 }

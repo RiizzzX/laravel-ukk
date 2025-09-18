@@ -11,7 +11,7 @@
       </svg>
     </div>
     <h2 class="mt-4 text-2xl font-bold text-gray-800">Masuk Akun</h2>
-    <p class="text-gray-500 text-sm">Gunakan username dan password Anda</p>
+    <p class="text-gray-500 text-sm">Gunakan <b>username</b> atau <b>email</b> beserta password Anda</p>
   </div>
 
   {{-- Notifikasi error --}}
@@ -24,12 +24,12 @@
   <form method="POST" action="{{ route('login') }}" class="space-y-5">
     @csrf
 
-    {{-- Username --}}
+    {{-- Username / Email --}}
     <div>
-      <input type="text" name="username" value="{{ old('username') }}" required autofocus
+      <input type="text" name="login" value="{{ old('login') }}" required autofocus
         class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500"
-        placeholder="Username">
-      @error('username')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+        placeholder="Username atau Email">
+      @error('login')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
     </div>
 
     {{-- Password --}}

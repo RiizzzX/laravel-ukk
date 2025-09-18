@@ -85,6 +85,9 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/pengaduan', [AdminController::class, 'listPengaduan'])->name('pengaduan.index');
     });
 
+Route::middleware(['auth', 'role:pengguna'])->group(function () {
+    Route::resource('pengaduan', \App\Http\Controllers\PengaduanController::class)->only(['index','create','store']);
+});
 
 /*
 |--------------------------------------------------------------------------

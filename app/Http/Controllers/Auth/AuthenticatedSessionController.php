@@ -20,14 +20,34 @@ class AuthenticatedSessionController extends Controller
     /**
      * Proses login
      */
-    public function store(LoginRequest $request)
-    {
-        $request->authenticate(); // pakai LoginRequest custom yang kamu buat
+    public function store(Request $request)
+{
+    $request->validate([
+        'login'    => 'required|string', // bisa username atau email
+        'password' => 'required|string',
+    ]);
 
-        $request->session()->regenerate();
+    // Tentukan apakah login pakai email atau username
+    $loginType = filter_var($request->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
 
-        return redirect()->intended('/redirect-by-role');
+    if (!Auth::attempt([$loginType => $request->login, 'password' => $request->password], $request->filled('remember'))) {
+        return back()->withErrors([
+            'login' => 'Login gagal! Periksa username/email dan password.',
+        ])->onlyInput('login');
     }
+
+    $request->session()->regenerate();
+
+    // Redirect sesuai role
+    $user = Auth::user();
+    if ($user->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    } elseif ($user->role === 'petugas') {
+        return redirect()->route('petugas.dashboard');
+    }
+    return redirect()->route('pengaduan.index'); // default user
+}
+
 
     /**
      * Logout

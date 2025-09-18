@@ -93,7 +93,28 @@
               <td class="p-4 text-sm text-gray-500">{{ $p->created_at->format('d M Y H:i') }}</td>
               <td class="p-4">
                 @if($p->foto)
-                  <a href="{{ asset('storage/'.$p->foto) }}" target="_blank" class="text-purple-600 hover:underline">Lihat</a>
+                  <div x-data="{ open: false }" class="relative">
+                    <!-- Thumbnail -->
+                    <img src="{{ asset('storage/'.$p->foto) }}"
+                         alt="Bukti"
+                         class="w-16 h-16 object-cover rounded border cursor-pointer hover:scale-105 transition"
+                         @click="open = true">
+
+                    <!-- Modal -->
+                    <div x-show="open" x-cloak
+                         class="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
+                         @click.self="open = false">
+                      <div class="bg-white p-3 rounded-xl shadow-lg max-w-2xl">
+                        <img src="{{ asset('storage/'.$p->foto) }}"
+                             alt="Bukti Full"
+                             class="max-h-[80vh] rounded-lg object-contain">
+                        <button @click="open = false"
+                                class="mt-3 w-full bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg">
+                          Tutup
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 @else
                   <span class="text-gray-400">-</span>
                 @endif
@@ -104,6 +125,8 @@
               <td colspan="6" class="text-center p-6 text-gray-500">Belum ada pengaduan</td>
             </tr>
           @endforelse
+          <script src="//unpkg.com/alpinejs" defer></script>
+
         </tbody>
       </table>
     </div>

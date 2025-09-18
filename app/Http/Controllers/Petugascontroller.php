@@ -7,16 +7,15 @@ use App\Models\Pengaduan;
 
 class PetugasController extends Controller
 {
-    // Dashboard petugas
+    // Dashboard Petugas
     public function dashboard()
     {
-        $pengaduan = Pengaduan::with(['user','item'])->latest()->get();
-
         return view('petugas.dashboard', [
-            'pengaduan' => $pengaduan,
-            'countPending' => Pengaduan::where('status','pending')->count(),
-            'countProses' => Pengaduan::where('status','proses')->count(),
-            'countSelesai' => Pengaduan::where('status','selesai')->count(),
+            'pengaduan'        => Pengaduan::with(['user','item','lokasi'])->latest()->get(),
+            'totalPengaduan'   => Pengaduan::count(),
+            'pengaduanPending' => Pengaduan::where('status','pending')->count(),
+            'pengaduanProses'  => Pengaduan::where('status','proses')->count(),
+            'pengaduanSelesai' => Pengaduan::where('status','selesai')->count(),
         ]);
     }
 
@@ -31,6 +30,6 @@ class PetugasController extends Controller
         $pengaduan->status = $request->status;
         $pengaduan->save();
 
-        return back()->with('success','Status pengaduan berhasil diperbarui.');
+        return back()->with('success', 'Status pengaduan berhasil diperbarui');
     }
 }

@@ -1,35 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Pengaduan;
-use App\Models\Item;
-use App\Models\Lokasi;
 use Illuminate\Support\Facades\Auth;
 
 class PengaduanController extends Controller
 {
-    public function index()
-    {
-        $user = Auth::user();
-
-        return view('pengaduan.index', [
-            'pengaduan'        => Pengaduan::where('id_user', $user->id_user)->latest()->get(),
-            'totalPengaduan'   => Pengaduan::where('id_user', $user->id_user)->count(),
-            'pengaduanProses'  => Pengaduan::where('id_user', $user->id_user)->where('status', 'proses')->count(),
-            'pengaduanSelesai' => Pengaduan::where('id_user', $user->id_user)->where('status', 'selesai')->count(),
-        ]);
-    }
-
-    public function create()
-    {
-        $items  = Item::all();
-        $lokasi = Lokasi::all(); // <-- wajib biar $lokasi ada di blade
-
-        return view('pengaduan.create', compact('items', 'lokasi'));
-    }
-
+    // store pengaduan (create "todo")
     public function store(Request $request)
     {
         $request->validate([
@@ -44,8 +24,8 @@ class PengaduanController extends Controller
             $path = $request->file('foto')->store('pengaduan', 'public');
         }
 
-        Pengaduan::create([
-            'id_user'       => Auth::id(),
+        $pengaduan = Pengaduan::create([
+            'id_user'       => Auth::id(), // will use id_user primary
             'id_item'       => $request->id_item,
             'id_lokasi'     => $request->id_lokasi,
             'deskripsi'     => $request->deskripsi,
@@ -54,6 +34,25 @@ class PengaduanController extends Controller
             'tgl_pengajuan' => now(),
         ]);
 
-        return redirect()->route('pengaduan.index')->with('success', 'Pengaduan berhasil dikirim!');
+        return response()->json(['message'=>'Pengaduan diterima','data'=>$pengaduan], 201);
+    }
+
+    // history for authenticated user
+    public function history(Request $request)
+    {
+        $user = $request->user();
+        $list = Pengaduan::with(['item','lokasi'])
+            ->where('id_user', $user->id_user)
+            ->orderBy('created_at','desc')
+            ->get();
+
+        return response()->json($list);
+    }
+
+    // optional: show single
+    public function show($id)
+    {
+        $p = Pengaduan::with(['item','lokasi','user'])->findOrFail($id);
+        return response()->json($p);
     }
 }
