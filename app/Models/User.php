@@ -24,6 +24,11 @@ class User extends Authenticatable
         'password',
         'role',
     ];
+// app/Models/User.php
+public function petugas()
+{
+    return $this->hasOne(Petugas::class, 'id_user', 'id_user');
+}
 
     /**
      * Kolom yang disembunyikan saat serialisasi

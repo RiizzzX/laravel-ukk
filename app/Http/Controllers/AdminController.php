@@ -12,15 +12,16 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
-    // Dashboard Statistik
+    // ================== DASHBOARD ==================
     public function dashboard()
     {
         return view('admin.dashboard', [
-            'countUsers'     => User::count(),
-            'countPetugas'   => Petugas::count(),
-            'countItems'     => Item::count(),
-            'countLokasi'    => Lokasi::count(),
-            'countPengaduan' => Pengaduan::count(),
+           'countUsers'        => User::count(),
+        'countPetugas'      => Petugas::count(),
+        'countItems'        => Item::count(),
+        'countLokasi'       => Lokasi::count(),
+        'countPengaduan'    => Pengaduan::count(),
+        'pengaduanTerbaru'  => Pengaduan::with(['user','item'])->latest()->take(5)->get(),
         ]);
     }
 
@@ -40,11 +41,13 @@ class AdminController extends Controller
             'password'     => 'required|min:6',
         ]);
 
+        // Simpan ke tabel petugas
         $petugas = Petugas::create([
             'nama_petugas' => $request->nama_petugas,
             'jabatan'      => $request->jabatan,
         ]);
 
+        // Tambahkan akun user untuk login
         User::create([
             'username' => $request->username,
             'name'     => $request->nama_petugas,
@@ -95,7 +98,7 @@ class AdminController extends Controller
     // ================== PENGADUAN ==================
     public function listPengaduan()
     {
-        $pengaduan = Pengaduan::with(['user','item','petugas'])->latest()->get();
+        $pengaduan = Pengaduan::with(['user','item','lokasi','petugas'])->latest()->get();
         return view('admin.pengaduan.index', compact('pengaduan'));
     }
 }
