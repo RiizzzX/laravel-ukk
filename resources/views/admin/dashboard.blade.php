@@ -14,6 +14,7 @@
 
     {{-- Statistik Ringkas --}}
     <div class="grid grid-cols-1 sm:grid-cols-5 gap-6 mb-10">
+      {{-- card total user --}}
       <div class="bg-gradient-to-r from-purple-600 to-purple-400 text-white p-6 rounded-2xl shadow flex items-center gap-4">
         <div class="bg-white/20 p-3 rounded-full">
           <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -25,6 +26,8 @@
           <p class="text-2xl font-bold">{{ $countUsers ?? 0 }}</p>
         </div>
       </div>
+
+      {{-- card total petugas --}}
       <div class="bg-gradient-to-r from-pink-500 to-rose-400 text-white p-6 rounded-2xl shadow flex items-center gap-4">
         <div class="bg-white/20 p-3 rounded-full">
           <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -36,6 +39,8 @@
           <p class="text-2xl font-bold">{{ $countPetugas ?? 0 }}</p>
         </div>
       </div>
+
+      {{-- card total item --}}
       <div class="bg-gradient-to-r from-blue-500 to-cyan-400 text-white p-6 rounded-2xl shadow flex items-center gap-4">
         <div class="bg-white/20 p-3 rounded-full">
           <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,6 +52,8 @@
           <p class="text-2xl font-bold">{{ $countItems ?? 0 }}</p>
         </div>
       </div>
+
+      {{-- card total lokasi --}}
       <div class="bg-gradient-to-r from-yellow-500 to-orange-400 text-white p-6 rounded-2xl shadow flex items-center gap-4">
         <div class="bg-white/20 p-3 rounded-full">
           <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,6 +65,8 @@
           <p class="text-2xl font-bold">{{ $countLokasi ?? 0 }}</p>
         </div>
       </div>
+
+      {{-- card total pengaduan --}}
       <div class="bg-gradient-to-r from-green-500 to-emerald-400 text-white p-6 rounded-2xl shadow flex items-center gap-4">
         <div class="bg-white/20 p-3 rounded-full">
           <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,56 +80,65 @@
       </div>
     </div>
 
-    {{-- Shortcut Menu --}}
-    <div class="grid grid-cols-1 sm:grid-cols-4 gap-6 mb-10">
-      <a href="{{ route('admin.petugas.index') }}" class="bg-white p-6 rounded-2xl shadow hover:shadow-lg">
-        <h4 class="font-semibold text-purple-700">Kelola Petugas</h4>
-      </a>
-      <a href="{{ route('admin.items.index') }}" class="bg-white p-6 rounded-2xl shadow hover:shadow-lg">
-        <h4 class="font-semibold text-blue-700">Kelola Item</h4>
-      </a>
-      <a href="{{ route('admin.lokasi.index') }}" class="bg-white p-6 rounded-2xl shadow hover:shadow-lg">
-        <h4 class="font-semibold text-yellow-700">Kelola Lokasi</h4>
-      </a>
-      <a href="{{ route('admin.pengaduan.index') }}" class="bg-white p-6 rounded-2xl shadow hover:shadow-lg">
-        <h4 class="font-semibold text-green-700">Kelola Pengaduan</h4>
-      </a>
-    </div>
-
     {{-- Tabel Pengaduan Terbaru --}}
-<div class="bg-white rounded-2xl shadow overflow-hidden">
-  <div class="p-4 font-semibold text-gray-700 border-b">Pengaduan Terbaru</div>
-  <table class="w-full">
-    <thead class="bg-purple-100">
-      <tr>
-        <th class="text-left p-3">User</th>
-        <th class="text-left p-3">Item</th>
-        <th class="text-left p-3">Status</th>
-        <th class="text-left p-3">Tanggal</th>
-      </tr>
-    </thead>
-    <tbody>
-      @forelse($pengaduanTerbaru as $p)
-        <tr class="border-t hover:bg-gray-50">
-          <td class="p-3">{{ $p->user->username ?? '-' }}</td>
-          <td class="p-3">{{ $p->item->nama_item ?? '-' }}</td>
-          <td class="p-3">
-            <span class="px-3 py-1 rounded-full text-sm
-              @if($p->status=='pending') bg-yellow-100 text-yellow-700
-              @elseif($p->status=='proses') bg-blue-100 text-blue-700
-              @else bg-green-100 text-green-700 @endif">
-              {{ ucfirst($p->status) }}
-            </span>
-          </td>
-          <td class="p-3 text-sm text-gray-500">{{ $p->created_at->format('d M Y') }}</td>
-        </tr>
-      @empty
-        <tr><td colspan="4" class="text-center p-4 text-gray-500">Belum ada data</td></tr>
-      @endforelse
-    </tbody>
-  </table>
-</div>
+    <div class="bg-white rounded-2xl shadow overflow-hidden">
+      <div class="p-4 font-semibold text-gray-700 border-b">Pengaduan Terbaru</div>
+      <table class="w-full border-collapse">
+        <thead class="bg-purple-100">
+          <tr>
+            <th class="text-left p-3">User</th>
+            <th class="text-left p-3">Item</th>
+            <th class="text-left p-3">Deskripsi</th>
+            <th class="text-left p-3">Status</th>
+            <th class="text-left p-3">Tanggal</th>
+            <th class="text-left p-3">Bukti</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          @forelse($pengaduanTerbaru as $p)
+            <tr class="border-t hover:bg-gray-50">
+              <td class="p-3">{{ $p->user->username ?? '-' }}</td>
+              <td class="p-3">{{ $p->item->nama_item ?? '-' }}</td>
+              <td class="p-3">{{ $p->deskripsi }}</td>
+              <td class="p-3">
+                <span class="px-3 py-1 rounded-full text-sm
+                  @if($p->status=='pending') bg-yellow-100 text-yellow-700
+                  @elseif($p->status=='proses') bg-blue-100 text-blue-700
+                  @else bg-green-100 text-green-700 @endif">
+                  {{ ucfirst($p->status) }}
+                </span>
+              </td>
+              <td class="p-3 text-sm text-gray-500">{{ $p->created_at->format('d M Y H:i') }}</td>
+              <td class="p-3">
+                @if($p->foto)
+                  <a href="{{ asset('storage/'.$p->foto) }}" target="_blank" class="text-purple-600 hover:underline">Lihat</a>
+                @else
+                  <span class="text-gray-400">-</span>
+                @endif
+              </td>
+            </tr>
+            @if($p->status === 'selesai')
+  <form action="{{ route('admin.pengaduan.destroy',$p->id_pengaduan) }}" 
+        method="POST" 
+        onsubmit="return confirm('Yakin hapus pengaduan ini?')">
+    @csrf
+    @method('DELETE')
+    <button type="submit" 
+            class="px-3 py-1 rounded bg-red-500 text-white text-sm hover:bg-red-600">
+      Hapus
+    </button>
+  </form>
+@endif
 
+          @empty
+            <tr>
+              <td colspan="6" class="text-center p-6 text-gray-500">Belum ada pengaduan</td>
+            </tr>
+          @endforelse
+        </tbody>
+      </table>
+    </div>
 
   </div>
 </div>

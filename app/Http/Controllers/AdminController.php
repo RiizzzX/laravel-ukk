@@ -94,11 +94,41 @@ class AdminController extends Controller
 
         return back()->with('success', 'Lokasi berhasil ditambahkan');
     }
+// ================== UPDATE STATUS PENGADUAN ==================
+public function updateStatusPengaduan(Request $request, $id)
+{
+    $request->validate([
+        'status' => 'required|in:pending,proses,selesai'
+    ]);
+
+    $pengaduan = Pengaduan::findOrFail($id);
+    $pengaduan->status = $request->status;
+    $pengaduan->save();
+
+    return back()->with('success', 'Status pengaduan berhasil diperbarui');
+}
 
     // ================== PENGADUAN ==================
     public function listPengaduan()
     {
         $pengaduan = Pengaduan::with(['user','item','lokasi','petugas'])->latest()->get();
         return view('admin.pengaduan.index', compact('pengaduan'));
+    }
+
+    public function destroyPengaduan($id)
+    {
+        $pengaduan = \App\Models\Pengaduan::findOrFail($id);
+
+        // Hanya hapus jika status sudah selesai
+        if ($pengaduan->status === 'selesai') {
+            // kalau ada foto hapus juga dari storage
+            if ($pengaduan->foto && \Storage::disk('public')->exists($pengaduan->foto)) {
+                \Storage::disk('public')->delete($pengaduan->foto);
+            }
+            $pengaduan->delete();
+            return back()->with('success', 'Pengaduan berhasil dihapus.');
+        }
+
+        return back()->with('error', 'Hanya pengaduan yang selesai yang bisa dihapus.');
     }
 }

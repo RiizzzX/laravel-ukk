@@ -67,6 +67,7 @@
             <th class="text-left p-4 font-semibold text-gray-700">Status</th>
             <th class="text-left p-4 font-semibold text-gray-700">Tanggal</th>
             <th class="text-left p-4 font-semibold text-gray-700">Bukti</th>
+            <th class="text-left p-4 font-semibold text-gray-700">Aksi</th>
           </tr>
         </thead>
         <tbody>
@@ -119,16 +120,40 @@
                   <span class="text-gray-400">-</span>
                 @endif
               </td>
+           <td class="p-4">
+  <div class="flex justify-center gap-2">
+    {{-- Tombol Edit hanya saat status pending --}}
+    @if($p->status === 'pending')
+      <a href="{{ route('pengaduan.edit',$p->id_pengaduan) }}" 
+         class="px-3 py-1 rounded bg-blue-500 text-white text-sm hover:bg-blue-600">
+         ✏️ Edit
+      </a>
+    @endif
+
+    {{-- Tombol Hapus saat pending atau selesai --}}
+    @if(in_array($p->status, ['pending','selesai']))
+      <form action="{{ route('pengaduan.destroy',$p->id_pengaduan) }}" method="POST" 
+            onsubmit="return confirm('Yakin hapus pengaduan ini?')">
+        @csrf
+        @method('DELETE')
+        <button type="submit" 
+                class="px-3 py-1 rounded bg-red-500 text-white text-sm hover:bg-red-600">
+          🗑️ Hapus
+        </button>
+      </form>
+    @endif
+  </div>
+</td>
+
             </tr>
           @empty
             <tr>
-              <td colspan="6" class="text-center p-6 text-gray-500">Belum ada pengaduan</td>
+              <td colspan="7" class="text-center p-6 text-gray-500">Belum ada pengaduan</td>
             </tr>
           @endforelse
-          <script src="//unpkg.com/alpinejs" defer></script>
-
         </tbody>
       </table>
+      <script src="//unpkg.com/alpinejs" defer></script>
     </div>
 
   </div>

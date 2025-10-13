@@ -83,11 +83,32 @@ Route::middleware(['auth', 'role:admin'])
 
         // Kelola Pengaduan (list semua pengaduan)
         Route::get('/pengaduan', [AdminController::class, 'listPengaduan'])->name('pengaduan.index');
+
+        Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    
+    // Hapus pengaduan
+    Route::middleware(['auth','role:admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+    
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+
+    // Kelola pengaduan
+    Route::get('/pengaduan', [AdminController::class, 'listPengaduan'])->name('pengaduan.index');
+    Route::delete('/pengaduan/{id}', [AdminController::class, 'destroyPengaduan'])->name('pengaduan.destroy');
+});
+
+});
+
     });
 
 Route::middleware(['auth', 'role:pengguna'])->group(function () {
     Route::resource('pengaduan', \App\Http\Controllers\PengaduanController::class)->only(['index','create','store']);
 });
+Route::post('/admin/pengaduan/{id}/status', [AdminController::class, 'updateStatusPengaduan'])
+    ->name('admin.pengaduan.updateStatus');
 
 /*
 |--------------------------------------------------------------------------
@@ -113,6 +134,11 @@ Route::middleware(['auth', 'role:pengguna'])
         Route::resource('pengaduan', PengaduanController::class)->only(['index', 'create', 'store']);
     });
 
+// routes/web.php
+Route::middleware(['auth', 'role:pengguna'])->group(function () {
+    Route::resource('pengaduan', PengaduanController::class)
+        ->only(['index','create','store','edit','update','destroy']);
+});
 
 /*
 |--------------------------------------------------------------------------

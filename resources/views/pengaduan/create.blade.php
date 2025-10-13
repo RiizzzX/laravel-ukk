@@ -24,7 +24,7 @@
         <label class="block text-sm font-medium text-gray-700">Pilih Item</label>
         <select name="id_item" required
           class="mt-1 w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-purple-500">
-          <option value="">-- Pilih Item --</option>
+          <option value="">Pilih Item</option>
           @foreach($items as $item)
             <option value="{{ $item->id_item }}">{{ $item->nama_item }}</option>
           @endforeach
@@ -36,7 +36,7 @@
         <label class="block text-sm font-medium text-gray-700">Pilih Lokasi</label>
         <select name="id_lokasi" required
           class="mt-1 w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-purple-500">
-          <option value="">-- Pilih Lokasi --</option>
+          <option value="">Pilih Lokasi</option>
           @foreach($lokasi as $l)
             <option value="{{ $l->id_lokasi }}">{{ $l->nama_lokasi }}</option>
           @endforeach
