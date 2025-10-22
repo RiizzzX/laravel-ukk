@@ -16,9 +16,12 @@ class PengaduanController extends Controller
         $user = Auth::user();
 
         return view('pengaduan.index', [
-            'pengaduan'        => Pengaduan::where('id_user', $user->id_user)->latest()->get(),
+            'pengaduan'        => Pengaduan::where('id_user', $user->id_user)
+                                    ->whereIn('status', ['pending', 'diproses'])
+                                    ->latest()
+                                    ->get(),
             'totalPengaduan'   => Pengaduan::where('id_user', $user->id_user)->count(),
-            'pengaduanProses'  => Pengaduan::where('id_user', $user->id_user)->where('status', 'proses')->count(),
+            'pengaduanProses'  => Pengaduan::where('id_user', $user->id_user)->where('status', 'diproses')->count(),
             'pengaduanSelesai' => Pengaduan::where('id_user', $user->id_user)->where('status', 'selesai')->count(),
         ]);
     }

@@ -11,12 +11,33 @@ class PetugasController extends Controller
     public function dashboard()
     {
         return view('petugas.dashboard', [
-            'pengaduan'        => Pengaduan::with(['user','item','lokasiRelation'])->latest()->get(),
             'totalPengaduan'   => Pengaduan::count(),
             'pengaduanPending' => Pengaduan::where('status','pending')->count(),
             'pengaduanProses'  => Pengaduan::where('status','diproses')->count(),
             'pengaduanSelesai' => Pengaduan::where('status','selesai')->count(),
         ]);
+    }
+
+    // Halaman daftar pengaduan (pending & diproses)
+    public function listPengaduan()
+    {
+        $pengaduan = Pengaduan::with(['user', 'item', 'lokasiRelation'])
+                        ->whereIn('status', ['pending', 'diproses'])
+                        ->latest()
+                        ->get();
+        
+        return view('petugas.pengaduan', compact('pengaduan'));
+    }
+
+    // Halaman riwayat pengaduan (selesai & ditolak)
+    public function riwayatPengaduan()
+    {
+        $pengaduan = Pengaduan::with(['user', 'item', 'lokasiRelation'])
+                        ->whereIn('status', ['selesai', 'ditolak'])
+                        ->latest()
+                        ->get();
+        
+        return view('petugas.riwayat', compact('pengaduan'));
     }
 
     // Update status pengaduan

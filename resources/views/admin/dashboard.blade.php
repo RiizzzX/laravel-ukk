@@ -417,7 +417,7 @@
               @forelse($items as $item)
                 <tr class="border-t hover:bg-gray-50">
                   <td class="p-3 text-sm font-medium">{{ $item->nama_item }}</td>
-                  <td class="p-3 text-sm">{{ $item->lokasi->nama_lokasi ?? '-' }}</td>
+                  <td class="p-3 text-sm">{{ $item->lokasiRelation->nama_lokasi ?? '-' }}</td>
                   <td class="p-3">
                     <span class="px-2 py-1 rounded text-xs font-semibold bg-green-100 text-green-700">Baik</span>
                   </td>

@@ -82,15 +82,16 @@
                                     {{ Str::limit($p->deskripsi, 50) }}
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <td class="px-6 py-4">
                                 @if($p->foto)
-                                    <button 
-                                        onclick="showImage('{{ asset('storage/' . $p->foto) }}')"
-                                        class="text-purple-600 hover:text-purple-800 font-medium">
-                                        Lihat
-                                    </button>
+                                    <img src="{{ asset('storage/'.$p->foto) }}" 
+                                         alt="Foto Bukti" 
+                                         class="w-16 h-16 object-cover rounded-lg cursor-pointer hover:opacity-80 hover:scale-105 transition-all shadow-md border-2 border-purple-200"
+                                         onclick="showImageModal('{{ asset('storage/'.$p->foto) }}')"
+                                         onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23e5e7eb%22 width=%22100%22 height=%22100%22/%3E%3Ctext fill=%22%23999%22 font-size=%2212%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22%3EGambar%3C/text%3E%3Ctext fill=%22%23999%22 font-size=%2212%22 x=%2250%25%22 y=%2265%25%22 text-anchor=%22middle%22%3ETidak Ada%3C/text%3E%3C/svg%3E'; this.classList.remove('cursor-pointer','hover:scale-105');"
+                                         title="Klik untuk memperbesar">
                                 @else
-                                    <span class="text-gray-400">-</span>
+                                    <span class="text-xs text-gray-400 italic">Tidak ada bukti</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -124,23 +125,51 @@
     </div>
 </div>
 
-<!-- Image Modal -->
-<div id="imageModal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center z-50" onclick="hideImage()">
-    <div class="max-w-4xl max-h-screen p-4">
-        <img id="modalImage" src="" alt="Bukti Foto" class="max-w-full max-h-full rounded-lg shadow-2xl">
+{{-- Modal untuk menampilkan foto besar --}}
+<div id="imageModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="relative max-w-5xl max-h-full">
+        <button type="button" class="absolute -top-12 right-0 text-white hover:text-gray-300 transition-all" id="closeModalBtn">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+        <img id="modalImage" src="" alt="Foto Bukti" class="max-w-full max-h-[90vh] rounded-xl shadow-2xl">
     </div>
 </div>
 
 <script>
-function showImage(src) {
-    document.getElementById('modalImage').src = src;
-    document.getElementById('imageModal').classList.remove('hidden');
-    document.getElementById('imageModal').classList.add('flex');
+function showImageModal(imageSrc) {
+    const modal = document.getElementById('imageModal');
+    const img = document.getElementById('modalImage');
+    img.src = imageSrc;
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
 }
 
-function hideImage() {
-    document.getElementById('imageModal').classList.add('hidden');
-    document.getElementById('imageModal').classList.remove('flex');
+function closeImageModal() {
+    const modal = document.getElementById('imageModal');
+    modal.classList.add('hidden');
+    document.body.style.overflow = 'auto';
 }
+
+// Close button click
+document.getElementById('closeModalBtn')?.addEventListener('click', function(e) {
+    e.stopPropagation();
+    closeImageModal();
+});
+
+// Click background to close
+document.getElementById('imageModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeImageModal();
+    }
+});
+
+// Close modal dengan tombol Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeImageModal();
+    }
+});
 </script>
 @endsection

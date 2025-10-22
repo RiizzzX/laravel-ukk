@@ -84,7 +84,7 @@
                 <td class="px-4 py-3 text-sm text-gray-700">{{ $p->created_at->format('d/m/Y H:i') }}</td>
                 <td class="px-4 py-3 text-sm text-gray-700">{{ $p->user->username ?? '-' }}</td>
                 <td class="px-4 py-3 text-sm text-gray-700">{{ $p->item->nama_item ?? '-' }}</td>
-                <td class="px-4 py-3 text-sm text-gray-700">{{ $p->lokasi->nama_lokasi ?? '-' }}</td>
+                <td class="px-4 py-3 text-sm text-gray-700">{{ $p->lokasiRelation->nama_lokasi ?? '-' }}</td>
                 <td class="px-4 py-3 text-sm text-gray-600 max-w-xs">{{ Str::limit($p->deskripsi, 50) }}</td>
                 <td class="px-4 py-3">
                   <span class="inline-flex px-2 py-1 rounded-full text-xs font-bold

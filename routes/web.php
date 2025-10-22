@@ -109,6 +109,8 @@ Route::middleware(['auth', 'role:petugas'])
     ->name('petugas.')
     ->group(function () {
         Route::get('/dashboard', [PetugasController::class, 'dashboard'])->name('dashboard');
+        Route::get('/pengaduan', [PetugasController::class, 'listPengaduan'])->name('pengaduan.index');
+        Route::get('/riwayat', [PetugasController::class, 'riwayatPengaduan'])->name('pengaduan.riwayat');
         Route::put('/pengaduan/{id}/status', [PetugasController::class, 'updateStatus'])->name('updateStatus');
     });
 

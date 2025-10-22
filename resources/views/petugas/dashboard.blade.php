@@ -12,95 +12,72 @@
 
     {{-- Statistik Ringkas --}}
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
-      <div class="bg-gradient-to-r from-purple-600 to-purple-400 text-white p-6 rounded-2xl shadow">
-        <h3 class="text-sm opacity-80">Total Pengaduan</h3>
-        <p class="text-2xl font-bold">{{ $totalPengaduan ?? 0 }}</p>
+      <div class="bg-gradient-to-r from-purple-600 to-purple-400 text-white p-6 rounded-2xl shadow flex items-center gap-4">
+        <div class="bg-white/20 p-3 rounded-full">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-sm opacity-80">Total Pengaduan</h3>
+          <p class="text-2xl font-bold">{{ $totalPengaduan ?? 0 }}</p>
+        </div>
       </div>
-      <div class="bg-gradient-to-r from-yellow-500 to-orange-400 text-white p-6 rounded-2xl shadow">
-        <h3 class="text-sm opacity-80">Pending</h3>
-        <p class="text-2xl font-bold">{{ $pengaduanPending ?? 0 }}</p>
+      <div class="bg-gradient-to-r from-yellow-500 to-orange-400 text-white p-6 rounded-2xl shadow flex items-center gap-4">
+        <div class="bg-white/20 p-3 rounded-full">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-sm opacity-80">Pending</h3>
+          <p class="text-2xl font-bold">{{ $pengaduanPending ?? 0 }}</p>
+        </div>
       </div>
-      <div class="bg-gradient-to-r from-green-500 to-emerald-400 text-white p-6 rounded-2xl shadow">
-        <h3 class="text-sm opacity-80">Selesai</h3>
-        <p class="text-2xl font-bold">{{ $pengaduanSelesai ?? 0 }}</p>
+      <div class="bg-gradient-to-r from-green-500 to-emerald-400 text-white p-6 rounded-2xl shadow flex items-center gap-4">
+        <div class="bg-white/20 p-3 rounded-full">
+          <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-sm opacity-80">Selesai</h3>
+          <p class="text-2xl font-bold">{{ $pengaduanSelesai ?? 0 }}</p>
+        </div>
       </div>
     </div>
 
-    {{-- Daftar Pengaduan --}}
-    <div class="bg-white rounded-2xl shadow overflow-hidden">
-      <table class="w-full border-collapse">
-        <thead class="bg-purple-100">
-          <tr>
-            <th class="p-4 text-left font-semibold text-gray-700">Pelapor</th>
-            <th class="p-4 text-left font-semibold text-gray-700">Item</th>
-            <th class="p-4 text-left font-semibold text-gray-700">Lokasi</th>
-            <th class="p-4 text-left font-semibold text-gray-700">Deskripsi</th>
-            <th class="p-4 text-left font-semibold text-gray-700">Status</th>
-            <th class="p-4 text-left font-semibold text-gray-700">Bukti Foto</th>
-            <th class="p-4 text-left font-semibold text-gray-700">Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          @forelse($pengaduan as $p)
-            <tr class="border-t hover:bg-gray-50">
-              <td class="p-4">{{ $p->user->username ?? '-' }}</td>
-              <td class="p-4">{{ $p->item->nama_item ?? '-' }}</td>
-              <td class="p-4">{{ $p->lokasi->nama_lokasi ?? '-' }}</td>
-              <td class="p-4">{{ $p->deskripsi }}</td>
-              <td class="p-4">
-                <form action="{{ route('petugas.updateStatus', $p->id_pengaduan) }}" method="POST">
-                  @csrf
-                  @method('PUT')
-                  <select name="status" onchange="this.form.submit()"
-                          class="px-2 py-1 border rounded text-sm">
-                    <option value="pending" @selected($p->status=='pending')>Pending</option>
-                    <option value="proses" @selected($p->status=='proses')>Proses</option>
-                    <option value="selesai" @selected($p->status=='selesai')>Selesai</option>
-                  </select>
-                </form>
-              </td>
-              <td class="p-4">
-                @if($p->foto)
-                  <button onclick="openModal('{{ asset('storage/'.$p->foto) }}')"
-                          class="text-purple-600 hover:underline">
-                    Lihat Foto
-                  </button>
-                @else
-                  <span class="text-gray-400">-</span>
-                @endif
-              </td>
-              <td class="p-4 text-sm text-gray-500">{{ $p->created_at->format('d M Y H:i') }}</td>
-            </tr>
-          @empty
-            <tr>
-              <td colspan="7" class="text-center p-6 text-gray-500">Belum ada pengaduan</td>
-            </tr>
-          @endforelse
-        </tbody>
-      </table>
+    {{-- Quick Links --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <a href="{{ route('petugas.pengaduan.index') }}" class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition-all border-2 border-purple-100 hover:border-purple-300 group">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow group-hover:scale-110 transition-transform">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-gray-800">Kelola Pengaduan</h3>
+            <p class="text-sm text-gray-500">Lihat dan proses pengaduan aktif</p>
+          </div>
+        </div>
+      </a>
+
+      <a href="{{ route('petugas.pengaduan.riwayat') }}" class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition-all border-2 border-emerald-100 hover:border-emerald-300 group">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-500 to-green-500 flex items-center justify-center shadow group-hover:scale-110 transition-transform">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-gray-800">Riwayat Pengaduan</h3>
+            <p class="text-sm text-gray-500">Lihat pengaduan yang sudah selesai</p>
+          </div>
+        </div>
+      </a>
     </div>
+
   </div>
 </div>
-
-{{-- Modal Foto --}}
-<div id="fotoModal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50">
-  <div class="bg-white p-4 rounded-xl shadow max-w-2xl">
-    <img id="fotoPreview" src="" class="max-h-[70vh] rounded" alt="Bukti Foto">
-    <div class="text-right mt-3">
-      <button onclick="closeModal()" class="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700">Tutup</button>
-    </div>
-  </div>
-</div>
-
-<script>
-  function openModal(src) {
-    document.getElementById('fotoPreview').src = src;
-    document.getElementById('fotoModal').classList.remove('hidden');
-    document.getElementById('fotoModal').classList.add('flex');
-  }
-  function closeModal() {
-    document.getElementById('fotoModal').classList.add('hidden');
-    document.getElementById('fotoModal').classList.remove('flex');
-  }
-</script>
 @endsection

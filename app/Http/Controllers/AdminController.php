@@ -163,14 +163,17 @@ public function updateStatusPengaduan(Request $request, $id)
     // ================== PENGADUAN ==================
     public function listPengaduan()
     {
-        $pengaduan = Pengaduan::with(['user','item','lokasi'])->latest()->get();
+        $pengaduan = Pengaduan::with(['user','item','lokasiRelation'])
+            ->whereIn('status', ['pending', 'diproses'])
+            ->latest()
+            ->get();
         return view('admin.pengaduan.index', compact('pengaduan'));
     }
 
     public function riwayatPengaduan()
     {
-        $pengaduan = Pengaduan::with(['user','item','lokasi'])
-            ->where('status', 'selesai')
+        $pengaduan = Pengaduan::with(['user','item','lokasiRelation'])
+            ->whereIn('status', ['selesai', 'ditolak'])
             ->latest()
             ->get();
         return view('admin.pengaduan.riwayat', compact('pengaduan'));
@@ -260,7 +263,7 @@ public function updateStatusPengaduan(Request $request, $id)
     // ================== LAPORAN ==================
     public function generateLaporan()
     {
-        $pengaduan = Pengaduan::with(['user', 'item', 'lokasi', 'petugas'])
+        $pengaduan = Pengaduan::with(['user', 'item', 'lokasiRelation', 'petugas'])
                               ->orderBy('created_at', 'desc')
                               ->get();
         
