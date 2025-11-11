@@ -27,4 +27,10 @@ class Petugas extends Model
     {
         return $this->belongsTo(User::class, 'id_user', 'id_user');
     }
+
+    // Relasi ke tabel pengaduan
+    public function pengaduan()
+    {
+        return $this->hasMany(Pengaduan::class, 'id_petugas', 'id_petugas');
+    }
 }

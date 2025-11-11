@@ -49,12 +49,33 @@
         </div>
       </div>
 
-      <!-- Tombol kanan -->
-      <div class="flex items-center gap-3">
-        <a href="{{ route('login') }}" class="text-sm text-gray-600 hover:text-gray-900 font-medium transition">Masuk</a>
-        <a href="{{ route('register') }}" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-bold shadow-lg hover:shadow-xl hover:from-purple-700 hover:to-purple-600 transition transform hover:scale-105">
-          Daftar
-        </a>
+      <!-- Tombol kanan - Tab Style -->
+      <div class="flex items-center gap-0 bg-gray-100 rounded-xl p-1">
+        @if(request()->routeIs('login'))
+          {{-- Di halaman login: Masuk = Ungu (active), Daftar = Abu-abu --}}
+          <a href="{{ route('login') }}" class="px-5 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-bold shadow-md transition">
+            Masuk
+          </a>
+          <a href="{{ route('register') }}" class="px-5 py-2 rounded-lg text-gray-600 hover:text-gray-900 text-sm font-medium transition">
+            Daftar
+          </a>
+        @elseif(request()->routeIs('register'))
+          {{-- Di halaman register: Daftar = Ungu (active), Masuk = Abu-abu --}}
+          <a href="{{ route('login') }}" class="px-5 py-2 rounded-lg text-gray-600 hover:text-gray-900 text-sm font-medium transition">
+            Masuk
+          </a>
+          <a href="{{ route('register') }}" class="px-5 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-bold shadow-md transition">
+            Daftar
+          </a>
+        @else
+          {{-- Default: Masuk abu-abu, Daftar ungu --}}
+          <a href="{{ route('login') }}" class="px-5 py-2 rounded-lg text-gray-600 hover:text-gray-900 text-sm font-medium transition">
+            Masuk
+          </a>
+          <a href="{{ route('register') }}" class="px-5 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-purple-500 text-white text-sm font-bold shadow-md transition">
+            Daftar
+          </a>
+        @endif
       </div>
     </div>
   </nav>

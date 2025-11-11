@@ -3,7 +3,7 @@
     $role = auth()->check() ? auth()->user()->role : null;
 @endphp
 
-<aside class="fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 flex flex-col shadow-lg z-40">
+<aside id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 flex flex-col shadow-lg z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
   <div class="flex-1 overflow-y-auto">
     {{-- Logo --}}
     <div class="flex items-center gap-3 px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-purple-50 to-pink-50">
@@ -49,11 +49,68 @@
     <nav class="mt-3 flex flex-col gap-0.5 px-3">
       @if($role === 'pengguna')
         {{-- Menu untuk User --}}
-        <a href="{{ route('pengaduan.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl font-semibold text-sm transition-all {{ request()->routeIs('pengaduan.index') ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-md' : 'text-gray-600 hover:bg-purple-50' }}">
+        <a href="{{ route('user.dashboard') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl font-semibold text-sm transition-all {{ request()->routeIs('user.dashboard') ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-md' : 'text-gray-600 hover:bg-purple-50' }}">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
           </svg>
           Dashboard
+        </a>
+        
+        {{-- Notifikasi Bell --}}
+        <button id="notificationBellSidebar" class="flex items-center gap-3 px-4 py-2 rounded-xl font-semibold text-sm transition-all text-gray-600 hover:bg-purple-50 relative w-full text-left">
+          <div class="relative">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            <span id="notificationCountSidebar" class="hidden absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full">0</span>
+          </div>
+          <span class="flex-1">Notifikasi</span>
+          <svg class="w-4 h-4 transition-transform" id="notificationChevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+        
+        {{-- Dropdown Notifikasi --}}
+        <div id="notificationDropdownSidebar" class="hidden overflow-hidden transition-all duration-300">
+          <div class="mx-3 my-2 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
+            {{-- Loading State --}}
+            <div id="loadingNotificationsSidebar" class="p-4 text-center">
+              <svg class="animate-spin h-5 w-5 mx-auto text-purple-500" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <p class="text-xs mt-2 text-gray-600">Memuat...</p>
+            </div>
+            
+            {{-- Empty State --}}
+            <div id="emptyNotificationsSidebar" class="hidden p-6 text-center">
+              <svg class="w-10 h-10 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+              </svg>
+              <p class="text-xs text-gray-500">Tidak ada notifikasi</p>
+            </div>
+            
+            {{-- Notification List --}}
+            <div id="notificationListSidebar" class="max-h-80 overflow-y-auto"></div>
+            
+            {{-- View All Link --}}
+            <div class="p-3 border-t border-purple-200">
+              <a href="{{ route('notifikasi.index') }}" class="block text-center text-xs font-semibold text-purple-600 hover:text-purple-700 transition">
+                Lihat Semua Notifikasi →
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="px-3 py-1.5 mt-2">
+          <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Pengaduan</p>
+        </div>
+        
+        <a href="{{ route('pengaduan.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl font-semibold text-sm transition-all {{ request()->routeIs('pengaduan.index') ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-md' : 'text-gray-600 hover:bg-purple-50' }}">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+          </svg>
+          Pengaduan
         </a>
         
         <a href="{{ route('pengaduan.riwayat') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl font-semibold text-sm transition-all {{ request()->routeIs('pengaduan.riwayat') ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-md' : 'text-gray-600 hover:bg-purple-50' }}">
@@ -89,15 +146,64 @@
           Dashboard
         </a>
         
+        {{-- Notifikasi Bell untuk Petugas --}}
+        <button id="notificationBellSidebar" class="flex items-center gap-3 px-4 py-2 rounded-xl font-semibold text-sm transition-all text-gray-600 hover:bg-purple-50 relative w-full text-left">
+          <div class="relative">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            <span id="notificationCountSidebar" class="hidden absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full">0</span>
+          </div>
+          <span class="flex-1">Notifikasi</span>
+          <svg class="w-4 h-4 transition-transform" id="notificationChevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+        
+        {{-- Dropdown Notifikasi --}}
+        <div id="notificationDropdownSidebar" class="hidden overflow-hidden transition-all duration-300">
+          <div class="mx-3 my-2 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
+            {{-- Loading State --}}
+            <div id="loadingNotificationsSidebar" class="p-4 text-center">
+              <svg class="animate-spin h-5 w-5 mx-auto text-purple-500" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <p class="text-xs mt-2 text-gray-600">Memuat...</p>
+            </div>
+            
+            {{-- Empty State --}}
+            <div id="emptyNotificationsSidebar" class="hidden p-6 text-center">
+              <svg class="w-10 h-10 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+              </svg>
+              <p class="text-xs text-gray-500">Tidak ada notifikasi</p>
+            </div>
+            
+            {{-- Notification List --}}
+            <div id="notificationListSidebar" class="max-h-80 overflow-y-auto"></div>
+            
+            {{-- View All Link --}}
+            <div class="p-3 border-t border-purple-200">
+              <a href="{{ route('notifikasi.index') }}" class="block text-center text-xs font-semibold text-purple-600 hover:text-purple-700 transition">
+                Lihat Semua Notifikasi →
+              </a>
+            </div>
+          </div>
+        </div>
+        
         <div class="px-3 py-1.5 mt-2">
           <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Pengaduan</p>
         </div>
         
-        <a href="{{ route('petugas.pengaduan.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl font-semibold text-sm transition-all {{ request()->routeIs('petugas.pengaduan.index') ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-md' : 'text-gray-600 hover:bg-purple-50' }}">
+        <a href="{{ route('petugas.pengaduan.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl font-semibold text-sm transition-all relative {{ request()->routeIs('petugas.pengaduan.index') ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-md' : 'text-gray-600 hover:bg-purple-50' }}">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
           </svg>
-          Pengaduan
+          <span class="flex-1">Pengaduan</span>
+          @if(isset($notifPengaduanBaru) && $notifPengaduanBaru > 0)
+            <span class="px-2 py-0.5 bg-red-500 text-white text-xs font-bold rounded-full animate-pulse">{{ $notifPengaduanBaru }}</span>
+          @endif
         </a>
         
         <a href="{{ route('petugas.pengaduan.riwayat') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl font-semibold text-sm transition-all {{ request()->routeIs('petugas.pengaduan.riwayat') ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-md' : 'text-gray-600 hover:bg-purple-50' }}">
@@ -126,6 +232,52 @@
           Dashboard
         </a>
         
+        {{-- Notifikasi Bell untuk Admin --}}
+        <button id="notificationBellSidebar" class="flex items-center gap-3 px-4 py-2 rounded-xl font-semibold text-sm transition-all text-gray-600 hover:bg-purple-50 relative w-full text-left">
+          <div class="relative">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            <span id="notificationCountSidebar" class="hidden absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full">0</span>
+          </div>
+          <span class="flex-1">Notifikasi</span>
+          <svg class="w-4 h-4 transition-transform" id="notificationChevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </button>
+        
+        {{-- Dropdown Notifikasi --}}
+        <div id="notificationDropdownSidebar" class="hidden overflow-hidden transition-all duration-300">
+          <div class="mx-3 my-2 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
+            {{-- Loading State --}}
+            <div id="loadingNotificationsSidebar" class="p-4 text-center">
+              <svg class="animate-spin h-5 w-5 mx-auto text-purple-500" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <p class="text-xs mt-2 text-gray-600">Memuat...</p>
+            </div>
+            
+            {{-- Empty State --}}
+            <div id="emptyNotificationsSidebar" class="hidden p-6 text-center">
+              <svg class="w-10 h-10 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+              </svg>
+              <p class="text-xs text-gray-500">Tidak ada notifikasi</p>
+            </div>
+            
+            {{-- Notification List --}}
+            <div id="notificationListSidebar" class="max-h-80 overflow-y-auto"></div>
+            
+            {{-- View All Link --}}
+            <div class="p-3 border-t border-purple-200">
+              <a href="{{ route('notifikasi.index') }}" class="block text-center text-xs font-semibold text-purple-600 hover:text-purple-700 transition">
+                Lihat Semua Notifikasi →
+              </a>
+            </div>
+          </div>
+        </div>
+        
         <div class="px-3 py-1.5 mt-2">
           <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Data Master</p>
         </div>
@@ -142,6 +294,19 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
           </svg>
           Item
+        </a>
+
+        <a href="{{ route('admin.temporary-items.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl font-semibold text-sm transition-all {{ request()->routeIs('admin.temporary-items.*') ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-md' : 'text-gray-600 hover:bg-purple-50' }}">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          Temporary Items
+          @php
+            $tempItemCount = \App\Models\TemporaryItem::where('status', 'pending')->count();
+          @endphp
+          @if($tempItemCount > 0)
+            <span class="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ $tempItemCount }}</span>
+          @endif
         </a>
         
         <div class="px-3 py-1.5 mt-2">
@@ -205,9 +370,9 @@
         <div class="text-xs text-gray-500 capitalize">{{ auth()->user()->role }}</div>
       </div>
     </div>
-    <form method="POST" action="{{ route('logout') }}">
+    <form id="logout-form" method="POST" action="{{ route('logout') }}" style="display: inline;">
       @csrf
-      <button type="submit" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-white border border-red-200 text-red-600 text-sm font-semibold hover:bg-red-50 hover:border-red-300 transition-all">
+      <button type="submit" onclick="return confirm('Apakah Anda yakin ingin logout?')" class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-white border border-red-200 text-red-600 text-sm font-semibold hover:bg-red-50 hover:border-red-300 transition-all">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
         </svg>

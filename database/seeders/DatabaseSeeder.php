@@ -12,11 +12,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        // Jalankan seeder untuk mengisi semua kelas dengan barang
+        $this->call([
+            LokasiSeeder::class,           // Buat lokasi/kelas
+            ItemSeederComplete::class,     // Buat semua item/barang
+            ItemLokasiSeederComplete::class, // Hubungkan item dengan lokasi
+        ]);
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        $this->command->info('Seeder completed! Semua kelas telah terisi dengan barang-barangnya.');
     }
 }

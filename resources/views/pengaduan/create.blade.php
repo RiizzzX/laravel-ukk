@@ -35,11 +35,23 @@
       {{-- Pilih Item --}}
       <div>
         <label class="block text-sm font-medium text-gray-700">Pilih Item</label>
-        <select name="id_item" id="item" required
-          class="mt-1 w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-purple-500">
+        <select name="id_item" id="item"
+          class="mt-1 w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-purple-500"
+          onchange="toggleTemporaryItem()">
           <option value="">Pilih lokasi terlebih dahulu</option>
         </select>
         <p class="text-xs text-gray-500 mt-1">Item akan muncul setelah memilih lokasi</p>
+      </div>
+
+      {{-- Input Temporary Item --}}
+      <div id="temporaryItemDiv" class="hidden">
+        <label class="block text-sm font-medium text-gray-700">
+          Nama Item Temporary <span class="text-red-500">*</span>
+        </label>
+        <input type="text" name="nama_item_temporary" id="namaItemTemporary"
+          class="mt-1 w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-purple-500"
+          placeholder="Masukkan nama item yang tidak ada di list...">
+        <p class="text-xs text-gray-500 mt-1">Item ini akan disimpan sementara dan perlu persetujuan admin</p>
       </div>
 
       {{-- Deskripsi --}}
@@ -52,11 +64,16 @@
 
       {{-- Upload Foto Bukti --}}
       <div>
-        <label class="block text-sm font-medium text-gray-700">Upload Foto Bukti (opsional)</label>
-        <input type="file" name="foto"
+        <label class="block text-sm font-medium text-gray-700">
+          Upload Foto Bukti <span class="text-red-500">*</span>
+        </label>
+        <input type="file" name="foto" required
           accept="image/jpeg,image/png"
           class="mt-1 w-full border rounded-xl px-4 py-2 focus:ring-2 focus:ring-purple-500">
-        <p class="text-xs text-gray-500 mt-1">Format: JPG/PNG, maksimal 5MB</p>
+        <p class="text-xs text-gray-500 mt-1">Format: JPG/PNG, maksimal 5MB (Wajib)</p>
+        @error('foto')
+          <p class="text-xs text-red-600 mt-1">{{ $message }}</p>
+        @enderror
       </div>
 
       {{-- Submit --}}
@@ -72,7 +89,7 @@
 </div>
 
 <script>
-  // Data items dengan lokasi
+  // Data items dengan lokasi via list_lokasi
   const itemsData = @json($items);
   
   function filterItems() {
@@ -88,24 +105,59 @@
       return;
     }
     
-    // Filter items by lokasi
-    const filteredItems = itemsData.filter(item => item.id_lokasi == lokasiId);
+    // Filter items yang ada di lokasi ini (via list_lokasi)
+    const availableItems = [];
+    itemsData.forEach(item => {
+      // Cek apakah item ini ada di lokasi yang dipilih
+      const hasLocation = item.list_lokasi && item.list_lokasi.some(ll => ll.id_lokasi == lokasiId);
+      if (hasLocation) {
+        availableItems.push(item);
+      }
+    });
     
-    if (filteredItems.length === 0) {
-      itemSelect.innerHTML = '<option value="">Tidak ada item di lokasi ini</option>';
-      itemSelect.disabled = true;
-      return;
-    }
-    
-    // Add filtered items to select
-    filteredItems.forEach(item => {
+    // Add available items to select
+    availableItems.forEach(item => {
       const option = document.createElement('option');
       option.value = item.id_item;
       option.textContent = item.nama_item;
       itemSelect.appendChild(option);
     });
     
+    // Add "Item Lainnya" option
+    const otherOption = document.createElement('option');
+    otherOption.value = 'temporary';
+    otherOption.textContent = '➕ Item Lainnya (Temporary)';
+    otherOption.className = 'font-semibold text-purple-600';
+    itemSelect.appendChild(otherOption);
+    
+    if (availableItems.length === 0) {
+      itemSelect.innerHTML = '<option value="">Tidak ada item di lokasi ini</option>';
+      // Still add temporary option
+      const tempOption = document.createElement('option');
+      tempOption.value = 'temporary';
+      tempOption.textContent = '➕ Item Lainnya (Temporary)';
+      tempOption.className = 'font-semibold text-purple-600';
+      itemSelect.appendChild(tempOption);
+    }
+    
     itemSelect.disabled = false;
+  }
+  
+  function toggleTemporaryItem() {
+    const itemSelect = document.getElementById('item');
+    const temporaryDiv = document.getElementById('temporaryItemDiv');
+    const temporaryInput = document.getElementById('namaItemTemporary');
+    
+    if (itemSelect.value === 'temporary') {
+      temporaryDiv.classList.remove('hidden');
+      temporaryInput.required = true;
+      itemSelect.removeAttribute('required');
+    } else {
+      temporaryDiv.classList.add('hidden');
+      temporaryInput.required = false;
+      temporaryInput.value = '';
+      itemSelect.setAttribute('required', 'required');
+    }
   }
   
   // Disable item select on load

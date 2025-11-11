@@ -1,0 +1,210 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "NGASAR API Tests",
+  "dateExported": "2025-10-23",
+  "version": "1.1",
+  "folders": [
+    {
+      "name": "Authentication",
+      "requests": []
+    },
+    {
+      "name": "Master Data",
+      "requests": []
+    },
+    {
+      "name": "Pengaduan",
+      "requests": []
+    }
+  ],
+  "requests": [
+    {
+      "name": "1. Register User",
+      "method": "POST",
+      "url": "http://localhost/api/auth/register",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"username\": \"testmobile\",\n  \"email\": \"test@mobile.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"
+      },
+      "tests": []
+    },
+    {
+      "name": "2. Login User",
+      "method": "POST",
+      "url": "http://localhost/api/auth/login",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"username\": \"testmobile\",\n  \"password\": \"password123\"\n}"
+      },
+      "tests": []
+    },
+    {
+      "name": "3. Get User Info (Me)",
+      "method": "GET",
+      "url": "http://localhost/api/auth/me",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer YOUR_TOKEN_HERE"
+        }
+      ],
+      "tests": []
+    },
+    {
+      "name": "4. Get All Lokasi",
+      "method": "GET",
+      "url": "http://localhost/api/master/lokasi",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "tests": []
+    },
+    {
+      "name": "5. Get Items by Lokasi",
+      "method": "GET",
+      "url": "http://localhost/api/master/items/by-lokasi/1",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ],
+      "tests": []
+    },
+    {
+      "name": "6. Create Pengaduan",
+      "method": "POST",
+      "url": "http://localhost/api/pengaduan",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer YOUR_TOKEN_HERE"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"id_item\": 1,\n  \"lokasi\": 1,\n  \"deskripsi\": \"Kursi rusak kaki patah\"\n}"
+      },
+      "tests": []
+    },
+    {
+      "name": "7. Get All Pengaduan",
+      "method": "GET",
+      "url": "http://localhost/api/pengaduan",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer YOUR_TOKEN_HERE"
+        }
+      ],
+      "tests": []
+    },
+    {
+      "name": "8. Get Statistics",
+      "method": "GET",
+      "url": "http://localhost/api/statistics",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer YOUR_TOKEN_HERE"
+        }
+      ],
+      "tests": []
+    },
+    {
+      "name": "9. Get Pending Pengaduan",
+      "method": "GET",
+      "url": "http://localhost/api/pengaduan/status/pending",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer YOUR_TOKEN_HERE"
+        }
+      ],
+      "tests": []
+    },
+    {
+      "name": "10. Submit Saran Item",
+      "method": "POST",
+      "url": "http://localhost/api/pengaduan/saran",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer YOUR_TOKEN_HERE"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"nama_item\": \"Proyektor LCD\",\n  \"lokasi\": 1,\n  \"alasan\": \"Proyektor lama sudah rusak dan tidak bisa diperbaiki\"\n}"
+      },
+      "tests": []
+    },
+    {
+      "name": "11. Logout",
+      "method": "POST",
+      "url": "http://localhost/api/auth/logout",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer YOUR_TOKEN_HERE"
+        }
+      ],
+      "tests": []
+    }
+  ]
+}

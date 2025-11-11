@@ -14,11 +14,28 @@ class Item extends Model
     public $incrementing = true;
     protected $keyType = 'int';
 
-  protected $fillable = ['nama_item','id_lokasi','deskripsi','foto'];
+  protected $fillable = ['nama_item','deskripsi','foto','is_temporary','is_approved','created_by'];
 
-  // Relasi ke Lokasi
-  public function lokasi()
+  protected $casts = [
+    'is_temporary' => 'boolean',
+    'is_approved' => 'boolean',
+  ];
+
+  // Many-to-many relationship dengan Lokasi via list_lokasi
+  public function lokasis()
   {
-    return $this->belongsTo(Lokasi::class, 'id_lokasi', 'id_lokasi');
+    return $this->belongsToMany(Lokasi::class, 'list_lokasi', 'id_item', 'id_lokasi', 'id_item', 'id_lokasi');
+  }
+
+  // Untuk backward compatibility
+  public function listLokasi()
+  {
+    return $this->hasMany(ListLokasi::class, 'id_item', 'id_item');
+  }
+
+  // Creator user
+  public function creator()
+  {
+    return $this->belongsTo(User::class, 'created_by', 'id_user');
   }
 }

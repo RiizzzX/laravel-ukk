@@ -14,11 +14,25 @@
         @csrf
         
         <div>
-          <label class="block text-sm font-semibold text-gray-700 mb-2">Nama Item</label>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            Nama Item <span class="text-red-500">*</span>
+          </label>
           <input type="text" name="nama_item" value="{{ old('nama_item') }}"
                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" 
                  placeholder="Masukkan nama item" required>
           @error('nama_item')
+            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+          @enderror
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold text-gray-700 mb-2">
+            Deskripsi <span class="text-red-500">*</span>
+          </label>
+          <textarea name="deskripsi" rows="4" required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition" 
+                    placeholder="Masukkan deskripsi item (spesifikasi, keterangan, dll)">{{ old('deskripsi') }}</textarea>
+          @error('deskripsi')
             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
           @enderror
         </div>

@@ -76,20 +76,20 @@
       @error('username')<p class="text-xs text-red-600 mt-2 flex items-center gap-1"><span>⚠️</span>{{ $message }}</p>@enderror
     </div>
 
-    {{-- Nama Lengkap --}}
+    {{-- Email --}}
     <div>
-      <label class="block text-sm font-semibold text-gray-700 mb-2">Nama Lengkap</label>
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Email</label>
       <div class="relative">
         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
           <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
           </svg>
         </div>
-        <input type="text" name="name" value="{{ old('name') }}" required
+        <input type="email" name="email" value="{{ old('email') }}" required
           class="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all"
-          placeholder="Masukkan nama lengkap">
+          placeholder="contoh@email.com">
       </div>
-      @error('name')<p class="text-xs text-red-600 mt-2 flex items-center gap-1"><span>⚠️</span>{{ $message }}</p>@enderror
+      @error('email')<p class="text-xs text-red-600 mt-2 flex items-center gap-1"><span>⚠️</span>{{ $message }}</p>@enderror
     </div>
 
     {{-- Password --}}

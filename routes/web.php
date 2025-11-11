@@ -7,6 +7,7 @@ use App\Http\Controllers\PetugasController;
 use App\Http\Controllers\PengaduanController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\LokasiController;
+use App\Http\Controllers\Admin\TemporaryItemController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 
@@ -16,13 +17,13 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 |--------------------------------------------------------------------------
 */
 
-// Redirect default
+// Landing Page
 Route::get('/', function () {
-    if (!auth()->check()) {
-        return redirect()->route('login');
+    if (auth()->check()) {
+        return redirect('/redirect-by-role');
     }
-    return redirect('/redirect-by-role');
-});
+    return view('landing');
+})->name('landing');
 
 // Dummy dashboard supaya Breeze/Fortify tidak error
 Route::get('/dashboard', function () {
@@ -47,6 +48,19 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
 
+// REFRESH CSRF TOKEN
+Route::get('/refresh-csrf', function() {
+    return response()->json(['token' => csrf_token()]);
+})->middleware('auth');
+
+// LOGOUT MANUAL (fallback jika CSRF expired)
+Route::get('/logout-manual', function() {
+    Auth::logout();
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+    return redirect('/')->with('success', 'Anda telah logout');
+})->middleware('auth');
+
 // Redirect by role
 Route::get('/redirect-by-role', function () {
     $user = auth()->user();
@@ -56,7 +70,7 @@ Route::get('/redirect-by-role', function () {
     } elseif ($user->role === 'petugas') {
         return redirect()->route('petugas.dashboard');
     }
-    return redirect()->route('pengaduan.index'); // default user
+    return redirect()->route('user.dashboard'); // default user
 })->middleware('auth');
 
 
@@ -83,8 +97,15 @@ Route::middleware(['auth', 'role:admin'])
         Route::put('/petugas/{id}', [AdminController::class, 'updatePetugas'])->name('petugas.update');
         Route::delete('/petugas/{id}', [AdminController::class, 'destroyPetugas'])->name('petugas.destroy');
 
-        // Kelola Items
+        // Kelola Item
         Route::resource('items', ItemController::class);
+        Route::post('/items/{id}/approve', [ItemController::class, 'approve'])->name('items.approve');
+
+        // Kelola Temporary Items
+        Route::get('/temporary-items', [TemporaryItemController::class, 'index'])->name('temporary-items.index');
+        Route::post('/temporary-items/{id}/approve', [TemporaryItemController::class, 'approve'])->name('temporary-items.approve');
+        Route::post('/temporary-items/{id}/reject', [TemporaryItemController::class, 'reject'])->name('temporary-items.reject');
+        Route::delete('/temporary-items/{id}', [TemporaryItemController::class, 'destroy'])->name('temporary-items.destroy');
 
         // Kelola Lokasi
         Route::resource('lokasi', LokasiController::class);
@@ -122,12 +143,23 @@ Route::middleware(['auth', 'role:petugas'])
 */
 Route::middleware(['auth', 'role:pengguna'])
     ->group(function () {
+        Route::get('/user/dashboard', [PengaduanController::class, 'dashboard'])->name('user.dashboard');
+        
         Route::resource('pengaduan', PengaduanController::class)
             ->only(['index','create','store','edit','update','destroy']);
         
         Route::get('/pengaduan-riwayat', [PengaduanController::class, 'riwayat'])->name('pengaduan.riwayat');
         Route::get('/saran-item', [PengaduanController::class, 'saran'])->name('pengaduan.saran');
         Route::post('/saran-item', [PengaduanController::class, 'storeSaran'])->name('pengaduan.storeSaran');
+        
+        // Mark notifikasi as read
+        Route::post('/notifikasi/mark-read', [PengaduanController::class, 'markNotificationRead'])->name('notifikasi.markRead');
+        
+        // Get unread notifications
+        Route::get('/notifikasi/unread', [PengaduanController::class, 'getUnreadNotifications'])->name('notifikasi.getUnread');
+        
+        // Notifikasi index page
+        Route::get('/notifikasi', [PengaduanController::class, 'notifikasiIndex'])->name('notifikasi.index');
     });
 
 /*

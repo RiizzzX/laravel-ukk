@@ -10,12 +10,45 @@
         <h1 class="text-3xl font-bold text-gray-800">Laporan Pengaduan</h1>
         <p class="text-gray-500">Laporan lengkap semua pengaduan sarana prasarana</p>
       </div>
-      <button onclick="window.print()" class="bg-gradient-to-r from-purple-600 to-pink-500 text-white px-6 py-3 rounded-lg shadow flex items-center gap-2 font-semibold hover:from-purple-700 hover:to-pink-600 transition print:hidden">
+      <button onclick="downloadPDF()" class="bg-gradient-to-r from-purple-600 to-pink-500 text-white px-6 py-3 rounded-lg shadow flex items-center gap-2 font-semibold hover:from-purple-700 hover:to-pink-600 transition print:hidden">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
         </svg>
-        Cetak Laporan
+        Download PDF
       </button>
+    </div>
+
+    {{-- Filter Section --}}
+    <div class="bg-white rounded-xl shadow-md p-6 mb-6 print:hidden">
+      <h3 class="text-lg font-bold text-gray-800 mb-4">Filter Laporan</h3>
+      <form method="GET" action="{{ route('admin.laporan') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+          <select name="status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+            <option value="">Semua Status</option>
+            <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+            <option value="diproses" {{ request('status') == 'diproses' ? 'selected' : '' }}>Diproses</option>
+            <option value="selesai" {{ request('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
+            <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Mulai</label>
+          <input type="date" name="tanggal_mulai" value="{{ request('tanggal_mulai') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Akhir</label>
+          <input type="date" name="tanggal_akhir" value="{{ request('tanggal_akhir') }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+        </div>
+        <div class="flex items-end gap-2">
+          <button type="submit" class="flex-1 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-semibold transition">
+            Filter
+          </button>
+          <a href="{{ route('admin.laporan') }}" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-semibold transition">
+            Reset
+          </a>
+        </div>
+      </form>
     </div>
 
     {{-- Statistik Ringkas --}}
@@ -143,4 +176,29 @@
     }
   }
 </style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+function downloadPDF() {
+  const element = document.body;
+  const options = {
+    margin: 0.5,
+    filename: 'Laporan_Pengaduan_{{ now()->format("Y-m-d_His") }}.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, logging: false },
+    jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
+  };
+  
+  // Hide buttons and show print elements
+  document.querySelectorAll('.print\\:hidden').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.print\\:block').forEach(el => el.style.display = 'block');
+  
+  // Generate PDF
+  html2pdf().set(options).from(element).save().then(() => {
+    // Restore visibility
+    document.querySelectorAll('.print\\:hidden').forEach(el => el.style.display = '');
+    document.querySelectorAll('.print\\:block').forEach(el => el.style.display = 'none');
+  });
+}
+</script>
 @endsection

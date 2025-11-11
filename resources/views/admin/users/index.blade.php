@@ -21,9 +21,21 @@
 
     {{-- Alert Messages --}}
     @if(session('success'))
-      <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+      <div class="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
         {{ session('success') }}
+        <button onclick="this.parentElement.remove()" class="absolute top-2 right-2 text-green-700 hover:text-green-900">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
       </div>
+      <script>
+        // Auto close modal on success
+        document.addEventListener('DOMContentLoaded', function() {
+          closeModal('addUserModal');
+          closeModal('editUserModal');
+        });
+      </script>
     @endif
     @if(session('error'))
       <div class="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
@@ -39,6 +51,7 @@
             <tr class="bg-purple-100">
               <th class="text-left p-4 text-sm font-semibold text-purple-900">ID</th>
               <th class="text-left p-4 text-sm font-semibold text-purple-900">Username</th>
+              <th class="text-left p-4 text-sm font-semibold text-purple-900">Email</th>
               <th class="text-left p-4 text-sm font-semibold text-purple-900">Nama</th>
               <th class="text-left p-4 text-sm font-semibold text-purple-900">Role</th>
               <th class="text-left p-4 text-sm font-semibold text-purple-900">Tanggal Dibuat</th>
@@ -50,6 +63,7 @@
               <tr class="border-t hover:bg-purple-50/30 transition">
                 <td class="p-4">{{ $user->id_user }}</td>
                 <td class="p-4 font-medium">{{ $user->username }}</td>
+                <td class="p-4 text-sm text-gray-600">{{ $user->email }}</td>
                 <td class="p-4">{{ $user->name }}</td>
                 <td class="p-4">
                   <span class="px-3 py-1 rounded-full text-sm
@@ -62,7 +76,7 @@
                 <td class="p-4 text-sm text-gray-500">{{ $user->created_at->format('d M Y H:i') }}</td>
                 <td class="p-4">
                   <div class="flex gap-2">
-                    <button onclick="editUser({{ $user->id_user }}, '{{ $user->username }}', '{{ $user->name }}', '{{ $user->role }}')" 
+                    <button onclick="editUser({{ $user->id_user }}, '{{ $user->username }}', '{{ $user->email }}', '{{ $user->role }}')" 
                             class="px-3 py-1.5 rounded-lg bg-purple-100 text-purple-700 text-xs font-semibold hover:bg-purple-200 transition">
                       Edit
                     </button>
@@ -92,6 +106,13 @@
           </tbody>
         </table>
       </div>
+      
+      {{-- Pagination --}}
+      @if($users->hasPages())
+        <div class="px-6 py-4 border-t border-gray-100">
+          {{ $users->links() }}
+        </div>
+      @endif
     </div>
 
   </div>
@@ -110,30 +131,51 @@
     </div>
     <form action="{{ route('admin.users.store') }}" method="POST" class="p-6 space-y-4">
       @csrf
+      @if($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          <ul class="list-disc list-inside">
+            @foreach($errors->all() as $error)
+              <li>{{ $error }}</li>
+            @endforeach
+          </ul>
+        </div>
+      @endif
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Username <span class="text-red-500">*</span>
+        </label>
         <input type="text" name="username" required 
-               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
+               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+               placeholder="Masukkan username">
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Email <span class="text-red-500">*</span>
+        </label>
+        <input type="email" name="email" required 
+               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+               placeholder="contoh@email.com">
+        <p class="text-xs text-gray-500 mt-1">Format: nama@domain.com</p>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Nama Lengkap <span class="text-red-500">*</span>
+        </label>
         <input type="text" name="name" required 
-               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
+               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+               placeholder="Masukkan nama lengkap">
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-        <input type="password" name="password" required 
-               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Password <span class="text-red-500">*</span>
+        </label>
+        <input type="password" name="password" required minlength="6"
+               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+               placeholder="Minimal 6 karakter">
+        <p class="text-xs text-gray-500 mt-1">Minimal 6 karakter</p>
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
-        <select name="role" required 
-                class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
-          <option value="">Pilih Role</option>
-          <option value="admin">Admin</option>
-          <option value="petugas">Petugas</option>
-          <option value="pengguna">Pengguna</option>
-        </select>
+        <input type="hidden" name="role" value="pengguna">
       </div>
       <div class="flex gap-3 pt-4">
         <button type="submit" 
@@ -164,27 +206,34 @@
       @csrf
       @method('PUT')
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Username <span class="text-red-500">*</span>
+        </label>
         <input type="text" id="edit_username" name="username" required 
                class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
       </div>
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
-        <input type="text" id="edit_name" name="name" required 
-               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+          Email <span class="text-red-500">*</span>
+        </label>
+        <input type="email" id="edit_email" name="email" required 
+               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+               placeholder="contoh@email.com">
+        <p class="text-xs text-gray-500 mt-1">Format: nama@domain.com</p>
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">Password (Kosongkan jika tidak diubah)</label>
-        <input type="password" id="edit_password" name="password" 
-               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
+        <input type="password" id="edit_password" name="password" minlength="6"
+               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+               placeholder="Minimal 6 karakter (opsional)">
+        <p class="text-xs text-gray-500 mt-1">Isi hanya jika ingin mengubah password</p>
       </div>
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">Role</label>
-        <select id="edit_role" name="role" required 
+        <select id="edit_role" name="role" required
                 class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none">
-          <option value="admin">Admin</option>
-          <option value="petugas">Petugas</option>
           <option value="pengguna">Pengguna</option>
+          <option value="petugas">Petugas</option>
         </select>
       </div>
       <div class="flex gap-3 pt-4">
@@ -210,10 +259,14 @@
     document.getElementById(modalId).classList.add('hidden');
   }
 
-  function editUser(id, username, name, role) {
+  function editUser(id, username, email, role) {
     document.getElementById('edit_username').value = username;
-    document.getElementById('edit_name').value = name;
-    document.getElementById('edit_role').value = role;
+    document.getElementById('edit_email').value = email;
+    
+    // Set role dropdown value
+    const roleSelect = document.getElementById('edit_role');
+    roleSelect.value = role;
+    
     document.getElementById('edit_password').value = '';
     document.getElementById('editUserForm').action = '/admin/users/' + id;
     openModal('editUserModal');

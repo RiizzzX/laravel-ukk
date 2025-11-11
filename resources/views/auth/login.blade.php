@@ -72,7 +72,7 @@
 
     {{-- Password --}}
     <div>
-      <label class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+      <label class="block text-sm font-semibold text-gray-700 mb-2">Password </label>
       <div class="relative">
         <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
           <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

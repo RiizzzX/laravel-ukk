@@ -5,9 +5,17 @@
   <div class="max-w-7xl mx-auto">
 
     {{-- Header --}}
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-800">Riwayat Pengaduan</h1>
-      <p class="text-gray-500">Daftar pengaduan yang sudah selesai</p>
+    <div class="mb-8 flex items-center justify-between">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-800">Riwayat Pengaduan</h1>
+        <p class="text-gray-500">Pengaduan yang sudah diselesaikan</p>
+      </div>
+      <a href="{{ route('petugas.pengaduan.index') }}" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-semibold transition flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Kembali ke Pengaduan
+      </a>
     </div>
 
     {{-- Alert Messages --}}
@@ -39,34 +47,48 @@
         <table class="w-full">
           <thead>
             <tr class="bg-emerald-50 border-b border-emerald-100">
-              <th class="text-left px-6 py-4 text-sm font-semibold text-emerald-900">ID User</th>
-              <th class="text-left px-6 py-4 text-sm font-semibold text-emerald-900">Username</th>
+              <th class="text-left px-6 py-4 text-sm font-semibold text-emerald-900">No</th>
+              <th class="text-left px-6 py-4 text-sm font-semibold text-emerald-900">User</th>
               <th class="text-left px-6 py-4 text-sm font-semibold text-emerald-900">Item</th>
+              <th class="text-left px-6 py-4 text-sm font-semibold text-emerald-900">Lokasi</th>
               <th class="text-left px-6 py-4 text-sm font-semibold text-emerald-900">Deskripsi</th>
-              <th class="text-left px-6 py-4 text-sm font-semibold text-emerald-900">Status</th>
-              <th class="text-left px-6 py-4 text-sm font-semibold text-emerald-900">Tanggal</th>
+              <th class="text-left px-6 py-4 text-sm font-semibold text-emerald-900">Petugas</th>
+              <th class="text-left px-6 py-4 text-sm font-semibold text-emerald-900">Tanggal Selesai</th>
+              <th class="text-left px-6 py-4 text-sm font-semibold text-emerald-900">Catatan</th>
               <th class="text-left px-6 py-4 text-sm font-semibold text-emerald-900">Bukti</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100">
-            @forelse($pengaduan as $p)
+            @forelse($pengaduan as $index => $p)
               <tr class="hover:bg-emerald-50/30 transition">
-                <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $p->id_user }}</td>
+                <td class="px-6 py-4 text-sm text-gray-700">{{ $index + 1 }}</td>
                 <td class="px-6 py-4 text-sm text-gray-800">{{ $p->user->username ?? '-' }}</td>
                 <td class="px-6 py-4 text-sm text-gray-800">{{ $p->item->nama_item ?? '-' }}</td>
-                <td class="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">{{ $p->deskripsi }}</td>
-                <td class="px-6 py-4">
-                  @if($p->status == 'selesai')
-                    <span class="inline-flex px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
-                      Selesai
-                    </span>
-                  @elseif($p->status == 'ditolak')
-                    <span class="inline-flex px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700">
-                      Ditolak
-                    </span>
+                <td class="px-6 py-4 text-sm text-gray-800">{{ $p->lokasiRelation->nama_lokasi ?? '-' }}</td>
+                <td class="px-6 py-4 text-sm text-gray-600 max-w-xs truncate" title="{{ $p->deskripsi }}">
+                  {{ Str::limit($p->deskripsi, 50) }}
+                </td>
+                <td class="px-6 py-4 text-sm">
+                  @if($p->petugas)
+                    <div class="flex items-center gap-2">
+                      <div class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold">
+                        {{ substr($p->petugas->nama_petugas, 0, 1) }}
+                      </div>
+                      <div>
+                        <p class="font-medium text-gray-800">{{ $p->petugas->nama_petugas }}</p>
+                        <p class="text-xs text-gray-500">{{ $p->petugas->jabatan ?? 'Petugas' }}</p>
+                      </div>
+                    </div>
+                  @else
+                    <span class="text-gray-400 text-xs italic">Belum ditangani</span>
                   @endif
                 </td>
-                <td class="px-6 py-4 text-sm text-gray-500">{{ $p->created_at->format('d M Y H:i') }}</td>
+                <td class="px-6 py-4 text-sm text-gray-500">
+                  {{ $p->tanggal_selesai ? $p->tanggal_selesai->format('d M Y') : '-' }}
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-600 max-w-xs truncate" title="{{ $p->catatan_petugas }}">
+                  {{ Str::limit($p->catatan_petugas ?? '-', 40) }}
+                </td>
                 <td class="px-6 py-4">
                   @if($p->foto)
                     <img src="{{ asset('storage/'.$p->foto) }}" 
@@ -76,23 +98,31 @@
                          onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23e5e7eb%22 width=%22100%22 height=%22100%22/%3E%3Ctext fill=%22%23999%22 font-size=%2212%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22%3EGambar%3C/text%3E%3Ctext fill=%22%23999%22 font-size=%2212%22 x=%2250%25%22 y=%2265%25%22 text-anchor=%22middle%22%3ETidak Ada%3C/text%3E%3C/svg%3E'; this.classList.remove('cursor-pointer','hover:scale-105');"
                          title="Klik untuk memperbesar">
                   @else
-                    <span class="text-xs text-gray-400 italic">Tidak ada bukti</span>
+                    <span class="text-xs text-gray-400 italic">Tidak ada</span>
                   @endif
                 </td>
               </tr>
             @empty
               <tr>
-                <td colspan="7" class="text-center px-6 py-12 text-gray-400">
+                <td colspan="9" class="text-center px-6 py-12 text-gray-400">
                   <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                   </svg>
-                  <p class="font-medium">Belum ada pengaduan selesai</p>
+                  <p class="font-medium">Belum ada riwayat pengaduan</p>
+                  <p class="text-sm text-gray-400 mt-1">Pengaduan yang sudah diselesaikan akan muncul di sini</p>
                 </td>
               </tr>
             @endforelse
           </tbody>
         </table>
       </div>
+
+      {{-- Pagination --}}
+      @if($pengaduan->hasPages())
+        <div class="mt-6">
+          {{ $pengaduan->links() }}
+        </div>
+      @endif
     </div>
 
   </div>

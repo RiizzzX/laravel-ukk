@@ -66,8 +66,8 @@
             </svg>
           </div>
           <div>
-            <h3 class="font-bold text-gray-800 text-lg">Daftar Pengaduan Aktif</h3>
-            <p class="text-xs text-gray-500">Pengaduan yang sedang pending atau diproses</p>
+            <h3 class="font-bold text-gray-800 text-lg">Pengaduan Aktif</h3>
+            <p class="text-xs text-gray-500">Pending, Diterima & Diproses ({{ count($pengaduan) }} pengaduan)</p>
           </div>
         </div>
       </div>
@@ -75,6 +75,7 @@
         <table class="w-full">
           <thead>
             <tr class="bg-purple-100 border-b border-purple-200">
+              <th class="text-left px-6 py-4 text-sm font-semibold text-purple-900">No</th>
               <th class="text-left px-6 py-4 text-sm font-semibold text-purple-900">Item</th>
               <th class="text-left px-6 py-4 text-sm font-semibold text-purple-900">Lokasi</th>
               <th class="text-left px-6 py-4 text-sm font-semibold text-purple-900">Deskripsi</th>
@@ -86,17 +87,26 @@
           <tbody class="divide-y divide-gray-100">
             @forelse($pengaduan as $p)
               <tr class="hover:bg-purple-50/30 transition">
+                <td class="px-6 py-4 text-sm font-mono font-bold text-purple-700">#{{ $p->id_pengaduan }}</td>
                 <td class="px-6 py-4 text-sm text-gray-800">{{ $p->item->nama_item ?? '-' }}</td>
                 <td class="px-6 py-4 text-sm text-gray-800">{{ $p->lokasiRelation->nama_lokasi ?? '-' }}</td>
                 <td class="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">{{ $p->deskripsi }}</td>
                 <td class="px-6 py-4">
                   @if($p->status == 'pending')
                     <span class="inline-flex px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-700">
-                      Pending
+                      ⏳ Pending
+                    </span>
+                  @elseif($p->status == 'pending_item')
+                    <span class="inline-flex px-3 py-1 rounded-full text-xs font-bold bg-orange-100 text-orange-700">
+                      🕐 Menunggu Item
+                    </span>
+                  @elseif($p->status == 'diterima')
+                    <span class="inline-flex px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700">
+                      ✅ Diterima
                     </span>
                   @elseif($p->status == 'diproses')
                     <span class="inline-flex px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700">
-                      Diproses
+                      🔄 Diproses
                     </span>
                   @endif
                 </td>
@@ -116,7 +126,7 @@
               </tr>
             @empty
               <tr>
-                <td colspan="6" class="text-center px-6 py-12 text-gray-400">
+                <td colspan="7" class="text-center px-6 py-12 text-gray-400">
                   <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
                   </svg>
@@ -128,6 +138,13 @@
           </tbody>
         </table>
       </div>
+      
+      {{-- Pagination --}}
+      @if($pengaduan->hasPages())
+        <div class="px-6 py-4 border-t border-gray-100">
+          {{ $pengaduan->links() }}
+        </div>
+      @endif
     </div>
 
   </div>

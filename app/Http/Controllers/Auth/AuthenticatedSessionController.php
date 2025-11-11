@@ -45,7 +45,7 @@ class AuthenticatedSessionController extends Controller
     } elseif ($user->role === 'petugas') {
         return redirect()->route('petugas.dashboard');
     }
-    return redirect()->route('pengaduan.index'); // default user
+    return redirect()->route('user.dashboard'); // default user
 }
 
 
@@ -59,6 +59,6 @@ class AuthenticatedSessionController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        return redirect('/');
     }
 }
