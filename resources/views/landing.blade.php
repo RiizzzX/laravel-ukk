@@ -42,28 +42,74 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-gradient-to-r from-purple-600 to-indigo-500 rounded-xl flex items-center justify-center"> <!-- Gradien ungu-indigo -->
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    <div class="w-12 h-10 flex items-center justify-center transform hover:scale-105 transition-transform relative flex-shrink-0">
+                        <svg viewBox="0 0 130 70" fill="none" class="w-full h-full">
+                            {{-- Cyan/Blue bubble (left, back) --}}
+                            <path d="M10 35 C10 22, 22 12, 38 12 L52 12 C68 12, 78 22, 78 35 C78 48, 68 58, 52 58 L42 58 L38 66 L36 58 L38 58 C22 58, 10 48, 10 35 Z" 
+                                  fill="url(#gradient-cyan-nav)" stroke="#0891b2" stroke-width="2.5"/>
+                            <circle cx="28" cy="35" r="3" fill="#ef4444"/>
+                            <circle cx="40" cy="35" r="3" fill="#f97316"/>
+                            <circle cx="52" cy="35" r="3" fill="#fbbf24"/>
+                            
+                            {{-- Purple bubble (right, front) --}}
+                            <path d="M52 25 C52 12, 64 4, 80 4 L98 4 C114 4, 124 14, 124 27 C124 40, 114 50, 98 50 L90 50 L92 58 L88 50 L82 50 C66 50, 52 38, 52 25 Z" 
+                                  fill="url(#gradient-purple-nav)" stroke="#7c3aed" stroke-width="2.5"/>
+                            <circle cx="72" cy="27" r="3" fill="#fbbf24"/>
+                            <circle cx="84" cy="27" r="3" fill="#f97316"/>
+                            <circle cx="96" cy="27" r="3" fill="#ef4444"/>
+                            
+                            <defs>
+                              <linearGradient id="gradient-cyan-nav" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#0891b2;stop-opacity:1" />
+                              </linearGradient>
+                              <linearGradient id="gradient-purple-nav" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#a855f7;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                              </linearGradient>
+                            </defs>
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-xl font-bold text-gray-800">Ngasar</h1>
-                        <p class="text-xs text-gray-500">Ngadu Sarana Prasarana</p>
+                        <h1 class="text-xl font-black bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">NGASAR</h1>
+                        <p class="text-xs text-gray-600 font-medium">Ngadu Sarana Prasarana</p>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-4">
-                    <a href="#tentang" class="text-gray-600 hover:text-purple-700 font-medium transition">Tentang</a> <!-- Warna hover ungu -->
+                {{-- Mobile Menu Button --}}
+                <button id="mobile-menu-btn" class="md:hidden text-gray-600 hover:text-purple-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+
+                {{-- Desktop Menu --}}
+                <div class="hidden md:flex items-center gap-4">
+                    <a href="#tentang" class="text-gray-600 hover:text-purple-700 font-medium transition">Tentang</a>
                     <a href="#fitur" class="text-gray-600 hover:text-purple-700 font-medium transition">Fitur</a>
                     <a href="#cara-kerja" class="text-gray-600 hover:text-purple-700 font-medium transition">Cara Kerja</a>
-                    <a href="{{ route('login') }}" class="px-5 py-2 bg-gradient-to-r from-purple-600 to-indigo-500 text-white rounded-lg font-semibold hover:shadow-lg transition-all"> <!-- Gradien tombol -->
+                    <a href="{{ route('login') }}" class="px-5 py-2 bg-gradient-to-r from-purple-600 to-indigo-500 text-white rounded-lg font-semibold hover:shadow-lg transition-all">
                         Masuk
                     </a>
                     <a href="{{ route('register') }}" class="px-5 py-2 border-2 border-purple-600 text-purple-600 rounded-lg font-semibold hover:bg-purple-50 transition">
                         Daftar
                     </a>
                 </div>
+            </div>
+        </div>
+
+        {{-- Mobile Menu Dropdown --}}
+        <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200">
+            <div class="px-4 py-4 space-y-3">
+                <a href="#tentang" class="block text-gray-600 hover:text-purple-700 font-medium">Tentang</a>
+                <a href="#fitur" class="block text-gray-600 hover:text-purple-700 font-medium">Fitur</a>
+                <a href="#cara-kerja" class="block text-gray-600 hover:text-purple-700 font-medium">Cara Kerja</a>
+                <a href="{{ route('login') }}" class="block text-center px-5 py-2 bg-gradient-to-r from-purple-600 to-indigo-500 text-white rounded-lg font-semibold">
+                    Masuk
+                </a>
+                <a href="{{ route('register') }}" class="block text-center px-5 py-2 border-2 border-purple-600 text-purple-600 rounded-lg font-semibold">
+                    Daftar
+                </a>
             </div>
         </div>
     </nav>
@@ -77,42 +123,42 @@
             <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style="animation-delay: 2s;"></div>
         </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div class="slide-in-left">
-                    <div class="inline-block px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm font-semibold mb-6"> <!-- Warna teks lebih gelap -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <div class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+                <div class="slide-in-left text-center md:text-left">
+                    <div class="inline-block px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-xs sm:text-sm font-semibold mb-4 md:mb-6">
                         ✨ Sistem Terpadu Sarana Prasarana
                     </div>
-                    <h1 class="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 md:mb-6 leading-tight">
                         Laporkan <span class="gradient-text">Barang Rusak</span> di Sekolah
                     </h1>
-                    <p class="text-xl text-gray-700 mb-8 leading-relaxed"> <!-- Warna teks deskripsi lebih gelap -->
+                    <p class="text-base sm:text-lg md:text-xl text-gray-700 mb-6 md:mb-8 leading-relaxed">
                         Platform digital untuk melaporkan kerusakan sarana prasarana di sekolah. Dilanjutkan dengan verifikasi admin dan ditangani oleh petugas terlatih hingga selesai.
                     </p>
-                    <div class="flex gap-4">
-                        <a href="{{ route('register') }}" class="px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-500 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center gap-2"> <!-- Gradien tombol -->
+                    <div class="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center md:justify-start">
+                        <a href="{{ route('register') }}" class="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-purple-600 to-indigo-500 text-white rounded-xl font-bold text-base sm:text-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                             </svg>
                             Mulai Sekarang
                         </a>
-                        <a href="#cara-kerja" class="px-8 py-4 bg-white border-2 border-purple-300 text-gray-700 rounded-xl font-bold text-lg hover:border-purple-500 hover:text-purple-700 transition-all"> <!-- Warna border dan teks lebih ungu -->
+                        <a href="#cara-kerja" class="px-6 sm:px-8 py-3 sm:py-4 bg-white border-2 border-purple-300 text-gray-700 rounded-xl font-bold text-base sm:text-lg hover:border-purple-500 hover:text-purple-700 transition-all text-center">
                             Pelajari Alurnya
                         </a>
                     </div>
                     
-                    <div class="grid grid-cols-3 gap-6 mt-12">
+                    <div class="grid grid-cols-3 gap-3 sm:gap-6 mt-8 md:mt-12">
                         <div>
-                            <p class="text-3xl font-bold text-purple-700">Verifikasi</p> <!-- Warna teks ungu -->
-                            <p class="text-gray-600 text-sm">Diproses Admin</p>
+                            <p class="text-xl sm:text-2xl md:text-3xl font-bold text-purple-700">Verifikasi</p>
+                            <p class="text-gray-600 text-xs sm:text-sm">Diproses Admin</p>
                         </div>
                         <div>
-                            <p class="text-3xl font-bold text-purple-700">Petugas</p> <!-- Warna teks ungu -->
-                            <p class="text-gray-600 text-sm">Langsung Bertindak</p>
+                            <p class="text-xl sm:text-2xl md:text-3xl font-bold text-purple-700">Petugas</p>
+                            <p class="text-gray-600 text-xs sm:text-sm">Langsung Bertindak</p>
                         </div>
                         <div>
-                            <p class="text-3xl font-bold text-purple-700">Selesai</p> <!-- Warna teks ungu -->
-                            <p class="text-gray-600 text-sm">Notifikasi Real-Time</p>
+                            <p class="text-xl sm:text-2xl md:text-3xl font-bold text-purple-700">Selesai</p>
+                            <p class="text-gray-600 text-xs sm:text-sm">Notifikasi Real-Time</p>
                         </div>
                     </div>
                 </div>
@@ -164,7 +210,7 @@
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8">
+            <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
                 <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-2xl p-8 hover:shadow-xl transition-all fade-in-up"> <!-- Gradien card -->
                     <div class="w-14 h-14 bg-gradient-to-r from-purple-600 to-indigo-500 rounded-xl flex items-center justify-center mb-6"> <!-- Gradien ikon -->
                         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -214,7 +260,7 @@
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-8">
+            <div class="grid sm:grid-cols-2 gap-6 md:gap-8">
                 <div class="bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition-all">
                     <div class="flex items-start gap-4">
                         <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -465,12 +511,35 @@
             <div class="grid md:grid-cols-4 gap-8 mb-8">
                 <div class="md:col-span-2">
                     <div class="flex items-center gap-3 mb-4">
-                        <div class="w-10 h-10 bg-gradient-to-r from-purple-600 to-indigo-500 rounded-xl flex items-center justify-center"> <!-- Gradien logo footer -->
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        <div class="w-12 h-10 flex items-center justify-center transform hover:scale-105 transition-transform relative flex-shrink-0">
+                            <svg viewBox="0 0 130 70" fill="none" class="w-full h-full">
+                                {{-- Cyan/Blue bubble (left, back) --}}
+                                <path d="M10 35 C10 22, 22 12, 38 12 L52 12 C68 12, 78 22, 78 35 C78 48, 68 58, 52 58 L42 58 L38 66 L36 58 L38 58 C22 58, 10 48, 10 35 Z" 
+                                      fill="url(#gradient-cyan-footer)" stroke="#0891b2" stroke-width="2.5"/>
+                                <circle cx="28" cy="35" r="3" fill="#ef4444"/>
+                                <circle cx="40" cy="35" r="3" fill="#f97316"/>
+                                <circle cx="52" cy="35" r="3" fill="#fbbf24"/>
+                                
+                                {{-- Purple bubble (right, front) --}}
+                                <path d="M52 25 C52 12, 64 4, 80 4 L98 4 C114 4, 124 14, 124 27 C124 40, 114 50, 98 50 L90 50 L92 58 L88 50 L82 50 C66 50, 52 38, 52 25 Z" 
+                                      fill="url(#gradient-purple-footer)" stroke="#7c3aed" stroke-width="2.5"/>
+                                <circle cx="72" cy="27" r="3" fill="#fbbf24"/>
+                                <circle cx="84" cy="27" r="3" fill="#f97316"/>
+                                <circle cx="96" cy="27" r="3" fill="#ef4444"/>
+                                
+                                <defs>
+                                  <linearGradient id="gradient-cyan-footer" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#0891b2;stop-opacity:1" />
+                                  </linearGradient>
+                                  <linearGradient id="gradient-purple-footer" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#a855f7;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                                  </linearGradient>
+                                </defs>
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-white">Ngasar</h3>
+                        <h3 class="text-xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">NGASAR</h3>
                     </div>
                     <p class="text-gray-400 mb-4">
                         Platform digital untuk melaporkan, memverifikasi, dan menangani kerusakan sarana prasarana sekolah secara terpadu.
@@ -504,11 +573,14 @@
     </footer>
 
     <script>
+        // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
+                    // Close mobile menu if open
+                    document.getElementById('mobile-menu').classList.add('hidden');
                     target.scrollIntoView({
                         behavior: 'smooth',
                         block: 'start'
@@ -516,6 +588,16 @@
                 }
             });
         });
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
     </script>
 </body>
 </html>

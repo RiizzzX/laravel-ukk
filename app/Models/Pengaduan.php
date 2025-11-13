@@ -22,6 +22,7 @@ class Pengaduan extends Model
         'foto_penyelesaian', // foto bukti penyelesaian dari petugas
         'is_read', // status notifikasi sudah dibaca user
         'status',
+        'tipe_pengaduan', // normal atau temporary
         'id_user',
         'id_petugas',
         'id_item',
@@ -100,6 +101,6 @@ class Pengaduan extends Model
     // Relasi ke temporary item
     public function temporaryItem()
     {
-        return $this->belongsTo(TemporaryItem::class, 'temporary_item_id', 'id_temporary_item');
+        return $this->belongsTo(TemporaryItem::class, 'temporary_item_id', 'id_temporary');
     }
 }

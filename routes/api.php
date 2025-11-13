@@ -39,10 +39,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
     });
 
-    // Pengaduan Management
+    // Pengaduan Management (Normal)
     Route::prefix('pengaduan')->group(function () {
-        Route::get('/', [PengaduanController::class, 'index']); // List semua pengaduan user
-        Route::post('/', [PengaduanController::class, 'store']); // Buat pengaduan baru
+        Route::get('/', [PengaduanController::class, 'index']); // List semua pengaduan normal user
+        Route::post('/', [PengaduanController::class, 'store']); // Buat pengaduan normal baru
         
         // Filter by status - HARUS SEBELUM /{id} agar tidak konflik
         Route::get('/status/pending', [PengaduanController::class, 'pending']);
@@ -60,6 +60,13 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/{id}', [PengaduanController::class, 'show']); // Detail pengaduan
         Route::put('/{id}', [PengaduanController::class, 'update']); // Update pengaduan (jika masih pending)
         Route::delete('/{id}', [PengaduanController::class, 'destroy']); // Hapus pengaduan
+    });
+
+    // Temporary Item Management (Item/Lokasi Baru)
+    Route::prefix('temporary-items')->group(function () {
+        Route::get('/', [PengaduanController::class, 'temporaryItemIndex']); // List temporary items user
+        Route::post('/', [PengaduanController::class, 'storeTemporaryItem']); // Submit temporary item baru
+        Route::get('/{id}', [PengaduanController::class, 'showTemporaryItem']); // Detail temporary item
     });
 
     // Statistics

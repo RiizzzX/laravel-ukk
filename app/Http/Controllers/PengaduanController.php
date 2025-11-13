@@ -7,6 +7,7 @@ use App\Models\Pengaduan;
 use App\Models\Item;
 use App\Models\Lokasi;
 use App\Models\TemporaryItem;
+use App\Models\Notifikasi;
 use Illuminate\Support\Facades\Auth;
 
 class PengaduanController extends Controller
@@ -16,38 +17,30 @@ class PengaduanController extends Controller
     {
         $user = Auth::user();
 
-        // Hitung notifikasi pengaduan yang statusnya berubah (untuk user)
-        $notifikasiCount = Pengaduan::where('id_user', $user->id_user)
-            ->whereIn('status', ['diterima', 'diproses', 'selesai', 'ditolak'])
-            ->where('is_read', false) // Pengaduan yang belum dibaca user
-            ->count();
-
-        // Pengaduan dengan status terbaru (untuk notifikasi detail)
-        $notifikasiBaru = Pengaduan::with(['item', 'lokasiRelation', 'petugas'])
-            ->where('id_user', $user->id_user)
-            ->whereIn('status', ['diterima', 'diproses', 'selesai', 'ditolak'])
-            ->where('is_read', false)
-            ->latest('updated_at')
-            ->take(5)
-            ->get();
-
         return view('dashboard', [
+            // PENGADUAN AKTIF - Hanya milik user ini
             'pengaduan'        => Pengaduan::with(['user', 'item', 'lokasiRelation', 'petugas'])
-                                    ->where('id_user', $user->id_user)
+                                    ->where('id_user', $user->id_user) // FILTER BY USER
+                                    ->where('tipe_pengaduan', 'normal')
                                     ->whereIn('status', ['pending', 'pending_item', 'diproses', 'diterima'])
                                     ->latest()
                                     ->get(),
+            // TEMPORARY ITEMS - Hanya milik user ini
+            'temporaryItems'   => TemporaryItem::where('id_user', $user->id_user) // FILTER BY USER
+                                    ->orderBy('created_at', 'desc')
+                                    ->get(),
+            // RIWAYAT - Hanya milik user ini
             'riwayat'          => Pengaduan::with(['user', 'item', 'lokasiRelation', 'petugas'])
-                                    ->where('id_user', $user->id_user)
+                                    ->where('id_user', $user->id_user) // FILTER BY USER
                                     ->whereIn('status', ['ditolak', 'selesai'])
                                     ->latest()
                                     ->take(10)
                                     ->get(),
-            'totalPengaduan'   => Pengaduan::where('id_user', $user->id_user)->count(),
+            // STATISTIK - Hanya milik user ini
+            'totalPengaduan'   => Pengaduan::where('id_user', $user->id_user)->where('tipe_pengaduan', 'normal')->count(),
+            'totalTemporary'   => TemporaryItem::where('id_user', $user->id_user)->count(),
             'pengaduanProses'  => Pengaduan::where('id_user', $user->id_user)->whereIn('status', ['diproses', 'diterima'])->count(),
             'pengaduanSelesai' => Pengaduan::where('id_user', $user->id_user)->where('status', 'selesai')->count(),
-            'notifikasiCount'  => $notifikasiCount, // Badge notifikasi
-            'notifikasiBaru'   => $notifikasiBaru,  // Detail notifikasi
         ]);
     }
 
@@ -57,12 +50,20 @@ class PengaduanController extends Controller
         $user = Auth::user();
 
         return view('pengaduan.index', [
+            // PENGADUAN AKTIF - Hanya milik user ini
             'pengaduan'        => Pengaduan::with(['user', 'item', 'lokasiRelation', 'petugas'])
-                                    ->where('id_user', $user->id_user)
+                                    ->where('id_user', $user->id_user) // FILTER BY USER
+                                    ->where('tipe_pengaduan', 'normal')
                                     ->whereIn('status', ['pending', 'pending_item', 'diproses', 'diterima'])
                                     ->latest()
                                     ->paginate(10),
-            'totalPengaduan'   => Pengaduan::where('id_user', $user->id_user)->count(),
+            // TEMPORARY ITEMS - Hanya milik user ini
+            'temporaryItems'   => TemporaryItem::where('id_user', $user->id_user) // FILTER BY USER
+                                    ->orderBy('created_at', 'desc')
+                                    ->paginate(10, ['*'], 'temp_page'),
+            // STATISTIK - Hanya milik user ini
+            'totalPengaduan'   => Pengaduan::where('id_user', $user->id_user)->where('tipe_pengaduan', 'normal')->count(),
+            'totalTemporary'   => TemporaryItem::where('id_user', $user->id_user)->count(),
             'pengaduanProses'  => Pengaduan::where('id_user', $user->id_user)->whereIn('status', ['diproses', 'diterima'])->count(),
             'pengaduanSelesai' => Pengaduan::where('id_user', $user->id_user)->where('status', 'selesai')->count(),
         ]);
@@ -79,77 +80,90 @@ class PengaduanController extends Controller
     // ================== STORE ==================
     public function store(Request $request)
     {
-        // Validasi dasar
+        // Determine submission type
+        $isTemporary = $request->tipe_pengaduan === 'temporary';
+        
+        // Build validation rules
         $rules = [
-            'deskripsi'  => 'required|string',
-            'id_lokasi'  => 'required|exists:lokasi,id_lokasi',
-            'foto'       => 'required|image|mimes:jpeg,jpg,png,gif,webp|max:2048', // Max 2MB dengan format tertentu
+            'tipe_pengaduan' => 'required|in:normal,temporary',
+            'deskripsi' => 'required|string',
         ];
-
-        // Jika temporary item
-        if ($request->id_item === 'temporary') {
-            $rules['nama_item_temporary'] = 'required|string|max:255';
+        
+        if ($isTemporary) {
+            // Temporary mode - photo optional, at least one checkbox required
+            $rules['foto'] = 'nullable|image|mimes:jpeg,jpg,png|max:2048';
+            $rules['ajukan_item_baru'] = 'nullable|boolean';
+            $rules['ajukan_lokasi_baru'] = 'nullable|boolean';
+            $rules['nama_barang_baru'] = 'nullable|string|max:255';
+            $rules['lokasi_barang_baru'] = 'nullable|string|max:255';
+            
+            // Custom validation: at least one checkbox must be checked
+            $request->validate($rules);
+            
+            if (!$request->ajukan_item_baru && !$request->ajukan_lokasi_baru) {
+                return back()->withErrors(['error' => 'Pilih minimal satu: Item Baru atau Lokasi Baru'])->withInput();
+            }
         } else {
+            // Normal mode - photo required, lokasi and item required
+            $rules['foto'] = 'required|image|mimes:jpeg,jpg,png|max:2048';
+            $rules['id_lokasi'] = 'required|exists:lokasi,id_lokasi';
             $rules['id_item'] = 'required|exists:items,id_item';
         }
-
-        $request->validate($rules);
-
-        // Handle temporary item
-        $itemId = $request->id_item;
         
-        if ($request->id_item === 'temporary' && $request->nama_item_temporary) {
-            // Create temporary item request di tabel terpisah
-            $tempItem = TemporaryItem::create([
-                'nama_item' => $request->nama_item_temporary,
-                'deskripsi' => 'Item temporary yang diajukan oleh user',
-                'id_lokasi' => $request->id_lokasi,
-                'created_by' => Auth::id(),
+        $validated = $request->validate($rules);
+        
+        // Handle file upload
+        $filename = null;
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('uploads/pengaduan'), $filename);
+        }
+        
+        if ($isTemporary) {
+            // TEMPORARY MODE: Langsung masuk ke tabel temporary_item
+            $temporaryItem = TemporaryItem::create([
+                'id_user' => auth()->id(),
+                'nama_barang_baru' => $request->ajukan_item_baru ? $request->nama_barang_baru : null,
+                'lokasi_barang_baru' => $request->ajukan_lokasi_baru ? $request->lokasi_barang_baru : null,
+                'deskripsi' => $request->deskripsi,
+                'foto' => $filename,
                 'status' => 'pending',
             ]);
-
-            // Notify all admins about new temporary item request
-            \App\Models\Notifikasi::notifyAllAdmins(
-                'item_temporary',
-                'Request Item Temporary Baru',
-                'User ' . Auth::user()->username . ' mengajukan item temporary: "' . $request->nama_item_temporary . '" untuk lokasi ' . $tempItem->lokasi->nama_lokasi,
+            
+            // Notify admins about temporary item
+            Notifikasi::notifyAllAdmins(
+                'temporary-item',
+                '📝 Pengajuan Item/Lokasi Baru',
+                'User ' . auth()->user()->name . ' mengajukan item/lokasi baru yang perlu direview.',
                 route('admin.temporary-items.index'),
-                $tempItem->id_temporary_item
+                $temporaryItem->id_temporary
             );
-
-            // Simpan null untuk id_item, nanti diisi setelah approved
-            $itemId = null;
+            
+            return redirect()->route('pengaduan.index')->with('success', 'Pengajuan item/lokasi baru berhasil dikirim! Tunggu persetujuan admin.');
+        } else {
+            // NORMAL MODE: Masuk ke tabel pengaduan dengan status pending
+            $pengaduan = Pengaduan::create([
+                'id_user' => auth()->id(),
+                'lokasi' => $request->id_lokasi,
+                'id_item' => $request->id_item,
+                'deskripsi' => $request->deskripsi,
+                'foto' => $filename,
+                'status' => 'pending',
+                'tipe_pengaduan' => 'normal',
+            ]);
+            
+            // Notify admins about new pengaduan
+            Notifikasi::notifyAllAdmins(
+                'pengaduan_baru',
+                '🔔 Pengaduan Baru Masuk',
+                'Pengaduan baru dari ' . auth()->user()->name . ': "' . substr($request->deskripsi, 0, 50) . '..."',
+                route('admin.pengaduan.index'),
+                $pengaduan->id_pengaduan
+            );
+            
+            return redirect()->route('pengaduan.index')->with('success', 'Pengaduan berhasil dibuat!');
         }
-
-        // Upload foto
-        $path = null;
-        if ($request->hasFile('foto')) {
-            $path = $request->file('foto')->store('pengaduan', 'public');
-        }
-
-        // Create pengaduan
-        $pengaduan = Pengaduan::create([
-            'deskripsi'     => $request->deskripsi,
-            'id_item'       => $itemId, // NULL jika temporary item
-            'lokasi'        => $request->id_lokasi,
-            'id_user'       => Auth::id(),
-            'status'        => $itemId === null ? 'pending_item' : 'pending', // Status khusus untuk pending item approval
-            'foto'          => $path,
-            'tgl_pengajuan' => now(),
-        ]);
-
-        // Jika temporary item, simpan relasi
-        if ($request->id_item === 'temporary') {
-            $pengaduan->temporary_item_id = $tempItem->id_temporary_item;
-            $pengaduan->save();
-        }
-
-        $message = 'Pengaduan berhasil dikirim.';
-        if ($request->id_item === 'temporary') {
-            $message .= ' Item temporary Anda akan ditinjau oleh admin terlebih dahulu.';
-        }
-
-        return redirect()->route('pengaduan.index')->with('success', $message);
     }
 
     // ================== EDIT ==================
@@ -216,7 +230,8 @@ class PengaduanController extends Controller
     {
         $user = Auth::user();
         
-        $riwayat = Pengaduan::where('id_user', $user->id_user)
+        // RIWAYAT - Hanya milik user ini (selesai + ditolak)
+        $riwayat = Pengaduan::where('id_user', $user->id_user) // FILTER BY USER
             ->whereIn('status', ['selesai', 'ditolak'])
             ->with(['item', 'lokasiRelation', 'petugas'])
             ->latest()
@@ -265,9 +280,13 @@ class PengaduanController extends Controller
     {
         $user = Auth::user();
         
-        // Ambil notifikasi dari tabel notifikasi
-        $notifikasi = \App\Models\Notifikasi::where('id_user', $user->id_user)
+        // Get total count of unread notifications
+        $totalUnread = \App\Models\Notifikasi::where('id_user', $user->id_user)
             ->where('is_read', false)
+            ->count();
+        
+        // Ambil notifikasi dari tabel notifikasi (limit 10 untuk dropdown, keduanya unread dan read)
+        $notifikasi = \App\Models\Notifikasi::where('id_user', $user->id_user)
             ->latest('created_at')
             ->limit(10)
             ->get()
@@ -284,7 +303,8 @@ class PengaduanController extends Controller
 
         return response()->json([
             'success' => true,
-            'notifikasi' => $notifikasi
+            'notifikasi' => $notifikasi,
+            'totalUnread' => $totalUnread  // Return total count for badge
         ]);
     }
 

@@ -11,18 +11,6 @@
         <p class="text-gray-500">Selamat datang, {{ auth()->user()->username }} 👋</p>
       </div>
       <div class="flex items-center gap-4">
-        <!-- Simple notification bell -->
-        <div class="relative">
-          <button id="notifBtn" class="p-2 rounded-lg bg-white border shadow-sm hover:bg-gray-50" title="Notifikasi">
-            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-            </svg>
-          </button>
-          @if(isset($notifikasiCount) && $notifikasiCount > 0)
-            <span class="notification-badge absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">{{ $notifikasiCount }}</span>
-          @endif
-        </div>
-
         <a href="{{ route('pengaduan.create') }}"
            class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-3 rounded-xl shadow-md flex items-center gap-2 transition">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -77,32 +65,6 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
         {{ session('success') }}
-      </div>
-    @endif
-
-    {{-- Notifikasi singkat (simple) --}}
-    @if(isset($notifikasiBaru) && $notifikasiBaru->count() > 0)
-      <div id="notificationCard" class="mb-6 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-xl">
-        <div class="flex items-center justify-between mb-3">
-          <h4 class="font-bold text-sm">🔔 Notifikasi Baru ({{ $notifikasiCount }})</h4>
-          <div class="flex items-center gap-2">
-            <button id="markReadBtn" class="text-xs px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition">
-              Tandai Sudah Dibaca
-            </button>
-            <a href="{{ route('pengaduan.riwayat') }}" class="text-xs text-blue-600 hover:underline">Lihat semua</a>
-          </div>
-        </div>
-        <ul class="space-y-2">
-          @foreach($notifikasiBaru as $notif)
-            <li class="p-2 bg-white rounded shadow-sm flex items-start justify-between">
-              <div class="pr-3">
-                <div class="text-sm font-medium text-gray-800">{{ $notif->item->nama_item ?? 'Item' }}</div>
-                <div class="text-xs text-gray-500">Status: <span class="font-semibold">{{ ucfirst($notif->status) }}</span> · {{ $notif->updated_at->diffForHumans() }}</div>
-              </div>
-              <div class="text-xs text-gray-400">#{{ $notif->id_pengaduan }}</div>
-            </li>
-          @endforeach
-        </ul>
       </div>
     @endif
 

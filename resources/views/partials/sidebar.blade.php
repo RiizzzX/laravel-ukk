@@ -56,52 +56,6 @@
           Dashboard
         </a>
         
-        {{-- Notifikasi Bell --}}
-        <button id="notificationBellSidebar" class="flex items-center gap-3 px-4 py-2 rounded-xl font-semibold text-sm transition-all text-gray-600 hover:bg-purple-50 relative w-full text-left">
-          <div class="relative">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-            </svg>
-            <span id="notificationCountSidebar" class="hidden absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full">0</span>
-          </div>
-          <span class="flex-1">Notifikasi</span>
-          <svg class="w-4 h-4 transition-transform" id="notificationChevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-          </svg>
-        </button>
-        
-        {{-- Dropdown Notifikasi --}}
-        <div id="notificationDropdownSidebar" class="hidden overflow-hidden transition-all duration-300">
-          <div class="mx-3 my-2 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
-            {{-- Loading State --}}
-            <div id="loadingNotificationsSidebar" class="p-4 text-center">
-              <svg class="animate-spin h-5 w-5 mx-auto text-purple-500" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              <p class="text-xs mt-2 text-gray-600">Memuat...</p>
-            </div>
-            
-            {{-- Empty State --}}
-            <div id="emptyNotificationsSidebar" class="hidden p-6 text-center">
-              <svg class="w-10 h-10 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-              </svg>
-              <p class="text-xs text-gray-500">Tidak ada notifikasi</p>
-            </div>
-            
-            {{-- Notification List --}}
-            <div id="notificationListSidebar" class="max-h-80 overflow-y-auto"></div>
-            
-            {{-- View All Link --}}
-            <div class="p-3 border-t border-purple-200">
-              <a href="{{ route('notifikasi.index') }}" class="block text-center text-xs font-semibold text-purple-600 hover:text-purple-700 transition">
-                Lihat Semua Notifikasi →
-              </a>
-            </div>
-          </div>
-        </div>
-        
         <div class="px-3 py-1.5 mt-2">
           <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Pengaduan</p>
         </div>
@@ -146,52 +100,6 @@
           Dashboard
         </a>
         
-        {{-- Notifikasi Bell untuk Petugas --}}
-        <button id="notificationBellSidebar" class="flex items-center gap-3 px-4 py-2 rounded-xl font-semibold text-sm transition-all text-gray-600 hover:bg-purple-50 relative w-full text-left">
-          <div class="relative">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-            </svg>
-            <span id="notificationCountSidebar" class="hidden absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full">0</span>
-          </div>
-          <span class="flex-1">Notifikasi</span>
-          <svg class="w-4 h-4 transition-transform" id="notificationChevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-          </svg>
-        </button>
-        
-        {{-- Dropdown Notifikasi --}}
-        <div id="notificationDropdownSidebar" class="hidden overflow-hidden transition-all duration-300">
-          <div class="mx-3 my-2 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
-            {{-- Loading State --}}
-            <div id="loadingNotificationsSidebar" class="p-4 text-center">
-              <svg class="animate-spin h-5 w-5 mx-auto text-purple-500" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              <p class="text-xs mt-2 text-gray-600">Memuat...</p>
-            </div>
-            
-            {{-- Empty State --}}
-            <div id="emptyNotificationsSidebar" class="hidden p-6 text-center">
-              <svg class="w-10 h-10 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-              </svg>
-              <p class="text-xs text-gray-500">Tidak ada notifikasi</p>
-            </div>
-            
-            {{-- Notification List --}}
-            <div id="notificationListSidebar" class="max-h-80 overflow-y-auto"></div>
-            
-            {{-- View All Link --}}
-            <div class="p-3 border-t border-purple-200">
-              <a href="{{ route('notifikasi.index') }}" class="block text-center text-xs font-semibold text-purple-600 hover:text-purple-700 transition">
-                Lihat Semua Notifikasi →
-              </a>
-            </div>
-          </div>
-        </div>
-        
         <div class="px-3 py-1.5 mt-2">
           <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Pengaduan</p>
         </div>
@@ -232,52 +140,6 @@
           Dashboard
         </a>
         
-        {{-- Notifikasi Bell untuk Admin --}}
-        <button id="notificationBellSidebar" class="flex items-center gap-3 px-4 py-2 rounded-xl font-semibold text-sm transition-all text-gray-600 hover:bg-purple-50 relative w-full text-left">
-          <div class="relative">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-            </svg>
-            <span id="notificationCountSidebar" class="hidden absolute -top-1 -right-1 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full">0</span>
-          </div>
-          <span class="flex-1">Notifikasi</span>
-          <svg class="w-4 h-4 transition-transform" id="notificationChevron" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-          </svg>
-        </button>
-        
-        {{-- Dropdown Notifikasi --}}
-        <div id="notificationDropdownSidebar" class="hidden overflow-hidden transition-all duration-300">
-          <div class="mx-3 my-2 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
-            {{-- Loading State --}}
-            <div id="loadingNotificationsSidebar" class="p-4 text-center">
-              <svg class="animate-spin h-5 w-5 mx-auto text-purple-500" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              <p class="text-xs mt-2 text-gray-600">Memuat...</p>
-            </div>
-            
-            {{-- Empty State --}}
-            <div id="emptyNotificationsSidebar" class="hidden p-6 text-center">
-              <svg class="w-10 h-10 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-              </svg>
-              <p class="text-xs text-gray-500">Tidak ada notifikasi</p>
-            </div>
-            
-            {{-- Notification List --}}
-            <div id="notificationListSidebar" class="max-h-80 overflow-y-auto"></div>
-            
-            {{-- View All Link --}}
-            <div class="p-3 border-t border-purple-200">
-              <a href="{{ route('notifikasi.index') }}" class="block text-center text-xs font-semibold text-purple-600 hover:text-purple-700 transition">
-                Lihat Semua Notifikasi →
-              </a>
-            </div>
-          </div>
-        </div>
-        
         <div class="px-3 py-1.5 mt-2">
           <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Data Master</p>
         </div>
@@ -295,29 +157,26 @@
           </svg>
           Item
         </a>
-
-        <a href="{{ route('admin.temporary-items.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl font-semibold text-sm transition-all {{ request()->routeIs('admin.temporary-items.*') ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-md' : 'text-gray-600 hover:bg-purple-50' }}">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-          </svg>
-          Temporary Items
-          @php
-            $tempItemCount = \App\Models\TemporaryItem::where('status', 'pending')->count();
-          @endphp
-          @if($tempItemCount > 0)
-            <span class="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ $tempItemCount }}</span>
-          @endif
-        </a>
         
         <div class="px-3 py-1.5 mt-2">
           <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Pengaduan</p>
         </div>
         
-        <a href="{{ route('admin.pengaduan.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl font-semibold text-sm transition-all {{ request()->routeIs('admin.pengaduan.*') && !request()->routeIs('admin.pengaduan.riwayat') ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-md' : 'text-gray-600 hover:bg-purple-50' }}">
+        <a href="{{ route('admin.pengaduan.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl font-semibold text-sm transition-all {{ request()->routeIs('admin.pengaduan.*') && !request()->routeIs('admin.pengaduan.riwayat') && !request()->routeIs('admin.temporary-items.*') ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-md' : 'text-gray-600 hover:bg-purple-50' }}">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
           </svg>
           Pengaduan
+          @php
+            try {
+              $tempItemPendingCount = \App\Models\Pengaduan::where('status', 'pending_item')->count();
+            } catch (\Exception $e) {
+              $tempItemPendingCount = 0;
+            }
+          @endphp
+          @if($tempItemPendingCount > 0)
+            <span class="ml-auto bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ $tempItemPendingCount }} item baru</span>
+          @endif
         </a>
         
         <a href="{{ route('admin.pengaduan.riwayat') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl font-semibold text-sm transition-all {{ request()->routeIs('admin.pengaduan.riwayat') ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-md' : 'text-gray-600 hover:bg-purple-50' }}">
@@ -325,6 +184,26 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
           </svg>
           Riwayat Pengaduan
+        </a>
+        
+        {{-- Temporary Items Review --}}
+        <a href="{{ route('admin.temporary-items.index') }}" class="flex items-center gap-3 px-4 py-2 rounded-xl font-semibold text-sm transition-all {{ request()->routeIs('admin.temporary-items.*') ? 'bg-gradient-to-r from-purple-600 to-purple-500 text-white shadow-md' : 'text-gray-600 hover:bg-purple-50' }}">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          Review Item/Lokasi Baru
+          @php
+            try {
+              $tempItemCount = \App\Models\TemporaryItem::whereHas('pengaduan', function($q) {
+                  $q->where('status', 'pending');
+              })->count();
+            } catch (\Exception $e) {
+              $tempItemCount = 0;
+            }
+          @endphp
+          @if($tempItemCount > 0)
+            <span class="ml-auto bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full animate-pulse">{{ $tempItemCount }}</span>
+          @endif
         </a>
         
         <div class="px-3 py-1.5 mt-2">
@@ -357,6 +236,50 @@
         </a>
       @endif
     </nav>
+  </div>
+
+  {{-- Notification Dropdown (Sidebar Bottom) --}}
+  <div class="px-4 py-3 border-t border-gray-100 bg-gradient-to-r from-purple-50 to-pink-50">
+    <button id="notificationBellSidebar" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-white transition-all duration-200 group">
+      <div class="flex items-center gap-3">
+        <div class="relative">
+          <svg class="w-5 h-5 text-purple-600 group-hover:text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+          </svg>
+          <span id="notificationBadgeSidebar" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center animate-pulse">0</span>
+        </div>
+        <span class="text-sm font-semibold text-gray-700 group-hover:text-purple-700">Notifikasi</span>
+      </div>
+      <svg id="notificationChevron" class="w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+      </svg>
+    </button>
+
+    {{-- Dropdown Content --}}
+    <div id="notificationDropdownSidebar" class="hidden mt-2 bg-white rounded-xl shadow-lg border border-gray-200 max-h-96 overflow-hidden">
+      {{-- Loading --}}
+      <div id="loadingNotificationsSidebar" class="hidden py-8 text-center">
+        <svg class="animate-spin h-6 w-6 mx-auto text-purple-600" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="text-xs text-gray-500 mt-2">Memuat...</p>
+      </div>
+
+      {{-- Empty --}}
+      <div id="emptyNotificationsSidebar" class="hidden py-8 px-4 text-center">
+        <svg class="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+        </svg>
+        <p class="text-xs font-semibold text-gray-700">Tidak Ada Notifikasi</p>
+        <p class="text-xs text-gray-500 mt-1">Anda tidak memiliki notifikasi baru</p>
+      </div>
+
+      {{-- Notification List --}}
+      <div id="notificationListSidebar" class="hidden overflow-y-auto max-h-80 divide-y divide-gray-100">
+        {{-- Notifications inserted here via JavaScript --}}
+      </div>
+    </div>
   </div>
 
   {{-- Profile & Logout --}}

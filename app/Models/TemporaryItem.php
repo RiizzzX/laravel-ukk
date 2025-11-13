@@ -9,69 +9,36 @@ class TemporaryItem extends Model
 {
     use HasFactory;
 
-    protected $table = 'temporary_items';
-    protected $primaryKey = 'id_temporary_item';
-
+    protected $table = 'temporary_item';
+    protected $primaryKey = 'id_temporary';
+    
     protected $fillable = [
-        'nama_item',
-        'deskripsi',
-        'id_lokasi',
-        'created_by',
-        'status',
+        'id_item',
+        'id_pengaduan',
+        'id_user', // Tambahan untuk langsung tahu siapa yang buat
+        'nama_barang_baru',
+        'lokasi_barang_baru',
+        'status', // pending, approved, rejected
         'alasan_penolakan',
-        'approved_by',
-        'approved_at',
+        'deskripsi', // Deskripsi pengaduan temporary
+        'foto', // Foto bukti temporary item
     ];
 
-    protected $casts = [
-        'approved_at' => 'datetime',
-    ];
-
-    /**
-     * Relasi ke User (pembuat)
-     */
-    public function creator()
+    // Relation to Item (optional - jika ada item reference)
+    public function item()
     {
-        return $this->belongsTo(User::class, 'created_by', 'id_user');
+        return $this->belongsTo(Item::class, 'id_item', 'id_item');
     }
 
-    /**
-     * Relasi ke User (admin yang approve/reject)
-     */
-    public function approver()
+    // Relation to Pengaduan (one-to-one)
+    public function pengaduan()
     {
-        return $this->belongsTo(User::class, 'approved_by', 'id_user');
+        return $this->belongsTo(Pengaduan::class, 'id_pengaduan', 'id_pengaduan');
     }
-
-    /**
-     * Relasi ke Lokasi
-     */
-    public function lokasi()
+    
+    // User yang membuat temporary item
+    public function user()
     {
-        return $this->belongsTo(Lokasi::class, 'id_lokasi', 'id_lokasi');
-    }
-
-    /**
-     * Scope untuk pending items
-     */
-    public function scopePending($query)
-    {
-        return $query->where('status', 'pending');
-    }
-
-    /**
-     * Scope untuk approved items
-     */
-    public function scopeApproved($query)
-    {
-        return $query->where('status', 'approved');
-    }
-
-    /**
-     * Scope untuk rejected items
-     */
-    public function scopeRejected($query)
-    {
-        return $query->where('status', 'rejected');
+        return $this->belongsTo(User::class, 'id_user', 'id_user');
     }
 }

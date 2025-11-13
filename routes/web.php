@@ -101,12 +101,6 @@ Route::middleware(['auth', 'role:admin'])
         Route::resource('items', ItemController::class);
         Route::post('/items/{id}/approve', [ItemController::class, 'approve'])->name('items.approve');
 
-        // Kelola Temporary Items
-        Route::get('/temporary-items', [TemporaryItemController::class, 'index'])->name('temporary-items.index');
-        Route::post('/temporary-items/{id}/approve', [TemporaryItemController::class, 'approve'])->name('temporary-items.approve');
-        Route::post('/temporary-items/{id}/reject', [TemporaryItemController::class, 'reject'])->name('temporary-items.reject');
-        Route::delete('/temporary-items/{id}', [TemporaryItemController::class, 'destroy'])->name('temporary-items.destroy');
-
         // Kelola Lokasi
         Route::resource('lokasi', LokasiController::class);
 
@@ -115,6 +109,21 @@ Route::middleware(['auth', 'role:admin'])
         Route::get('/pengaduan/riwayat', [AdminController::class, 'riwayatPengaduan'])->name('pengaduan.riwayat');
         Route::delete('/pengaduan/{id}', [AdminController::class, 'destroyPengaduan'])->name('pengaduan.destroy');
         Route::post('/pengaduan/{id}/status', [AdminController::class, 'updateStatusPengaduan'])->name('pengaduan.updateStatus');
+        Route::post('/pengaduan/{id}/approve-item', [AdminController::class, 'approveTemporaryItemOld'])->name('pengaduan.approveItem');
+        Route::post('/pengaduan/{id}/reject-item', [AdminController::class, 'rejectTemporaryItemOld'])->name('pengaduan.rejectItem');
+        
+        // Temporary Items Management (NEW)
+        Route::get('/temporary-items', [AdminController::class, 'temporaryItemIndex'])->name('temporary-items.index');
+        // Safe GET redirects so opening the POST URL directly doesn't cause CSRF 419 page expired
+        Route::get('/temporary-items/{id}/approve', function($id) {
+            return redirect()->route('admin.temporary-items.index')->with('error', 'Aksi approve harus dilakukan melalui tombol di halaman (form POST).');
+        })->name('temporary-items.approve.get');
+        Route::get('/temporary-items/{id}/reject', function($id) {
+            return redirect()->route('admin.temporary-items.index')->with('error', 'Aksi reject harus dilakukan melalui tombol di halaman (form POST).');
+        })->name('temporary-items.reject.get');
+        // Actual POST actions
+        Route::post('/temporary-items/{id}/approve', [AdminController::class, 'approveTemporaryItem'])->name('temporary-items.approve');
+        Route::post('/temporary-items/{id}/reject', [AdminController::class, 'rejectTemporaryItem'])->name('temporary-items.reject');
         
         // Generate Laporan
         Route::get('/laporan', [AdminController::class, 'generateLaporan'])->name('laporan');
@@ -152,15 +161,25 @@ Route::middleware(['auth', 'role:pengguna'])
         Route::get('/saran-item', [PengaduanController::class, 'saran'])->name('pengaduan.saran');
         Route::post('/saran-item', [PengaduanController::class, 'storeSaran'])->name('pengaduan.storeSaran');
         
-        // Mark notifikasi as read
-        Route::post('/notifikasi/mark-read', [PengaduanController::class, 'markNotificationRead'])->name('notifikasi.markRead');
+        // Temporary Items (Pengajuan Item/Lokasi Baru)
+        Route::get('/temporary-items', [\App\Http\Controllers\TemporaryItemController::class, 'index'])->name('temporary-items.index');
+        Route::get('/temporary-items/create', [\App\Http\Controllers\TemporaryItemController::class, 'create'])->name('temporary-items.create');
+        Route::post('/temporary-items', [\App\Http\Controllers\TemporaryItemController::class, 'store'])->name('temporary-items.store');
         
-        // Get unread notifications
-        Route::get('/notifikasi/unread', [PengaduanController::class, 'getUnreadNotifications'])->name('notifikasi.getUnread');
-        
-        // Notifikasi index page
-        Route::get('/notifikasi', [PengaduanController::class, 'notifikasiIndex'])->name('notifikasi.index');
+        // Notifikasi index page - DISABLED (notifikasi hanya di dropdown sidebar)
+        // Route::get('/notifikasi', [PengaduanController::class, 'notifikasiIndex'])->name('notifikasi.index');
     });
+
+/*
+|--------------------------------------------------------------------------
+| Shared Routes (for all authenticated users - admin, petugas, pengguna)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
+    // Notification endpoints (shared for all roles)
+    Route::post('/notifikasi/mark-read', [PengaduanController::class, 'markNotificationRead'])->name('notifikasi.markRead');
+    Route::get('/notifikasi/unread', [PengaduanController::class, 'getUnreadNotifications'])->name('notifikasi.getUnread');
+});
 
 /*
 |--------------------------------------------------------------------------

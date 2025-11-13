@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Pengaduan;
 use App\Models\Petugas;
+use App\Models\Notifikasi;
 
 class PetugasController extends Controller
 {
@@ -105,10 +106,11 @@ class PetugasController extends Controller
         // Mark bahwa petugas sudah buka halaman pengaduan (notif hilang)
         session()->put('pengaduan_viewed_' . $petugas->id_petugas, true);
         
-        // Tampilkan pengaduan baru (belum ada yang ambil) + yang sedang dikerjakan petugas ini
+        // PETUGAS: Lihat pengaduan yang tersedia (status diterima dari admin) + yang sedang dikerjakan sendiri
+        // TIDAK bisa lihat pengaduan user tertentu, hanya yang sudah di-approve admin
         $pengaduan = Pengaduan::with(['user', 'item', 'lokasiRelation', 'petugas'])
                         ->where(function($q) use ($petugas) {
-                            // Pengaduan baru yang tersedia untuk semua petugas
+                            // Pengaduan baru yang tersedia untuk semua petugas (dari admin)
                             $q->where(function($query) {
                                 $query->where('status', 'diterima')
                                       ->whereNull('id_petugas');
@@ -130,6 +132,7 @@ class PetugasController extends Controller
     {
         $petugas = Petugas::where('id_user', auth()->id())->first();
         
+        // PETUGAS: Hanya lihat riwayat pengaduan yang DIKERJAKAN SENDIRI (yang id_petugas = petugas ini)
         $pengaduan = Pengaduan::with(['user', 'item', 'lokasiRelation'])
                         ->where('id_petugas', $petugas->id_petugas)
                         ->where('status', 'selesai')
@@ -192,6 +195,47 @@ class PetugasController extends Controller
         }
 
         $pengaduan->save();
+
+        // Kirim notifikasi real-time ke user
+        if ($request->status === 'diproses') {
+            Notifikasi::createNotification(
+                $pengaduan->id_user,
+                'status_update',
+                '🔧 Pengaduan Sedang Diproses',
+                'Pengaduan Anda "' . $pengaduan->judul_laporan . '" sedang dikerjakan oleh petugas ' . $petugas->nama_petugas,
+                route('pengaduan.index'),
+                $pengaduan->id_pengaduan
+            );
+
+            // Notify admin bahwa petugas telah mengambil pengaduan
+            Notifikasi::notifyAllAdmins(
+                'petugas_claim',
+                '👤 Petugas Mengambil Pengaduan',
+                'Petugas ' . $petugas->nama_petugas . ' telah mengambil pengaduan: "' . $pengaduan->judul_laporan . '"',
+                route('admin.pengaduan.riwayat'),
+                $pengaduan->id_pengaduan
+            );
+
+        } elseif ($request->status === 'selesai') {
+            Notifikasi::createNotification(
+                $pengaduan->id_user,
+                'status_update',
+                '✅ Pengaduan Selesai',
+                'Pengaduan Anda "' . $pengaduan->judul_laporan . '" telah selesai dikerjakan.' . 
+                ($request->catatan_petugas ? ' Catatan: ' . $request->catatan_petugas : ''),
+                route('pengaduan.index'),
+                $pengaduan->id_pengaduan
+            );
+
+            // Notify admin bahwa pengaduan telah selesai
+            Notifikasi::notifyAllAdmins(
+                'pengaduan_selesai',
+                '✅ Pengaduan Selesai',
+                'Petugas ' . $petugas->nama_petugas . ' telah menyelesaikan pengaduan: "' . $pengaduan->judul_laporan . '"',
+                route('admin.pengaduan.riwayat'),
+                $pengaduan->id_pengaduan
+            );
+        }
 
         $message = $request->status === 'selesai' 
             ? 'Pengaduan selesai dikerjakan' 

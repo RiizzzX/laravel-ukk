@@ -139,6 +139,13 @@
           </tbody>
         </table>
       </div>
+      
+      {{-- Pagination --}}
+      @if($pengaduan->hasPages())
+        <div class="px-6 py-4 border-t border-gray-200 print:hidden">
+          {{ $pengaduan->appends(request()->except('page'))->links() }}
+        </div>
+      @endif
     </div>
 
     {{-- Footer untuk print --}}
