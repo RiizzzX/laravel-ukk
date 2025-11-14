@@ -1,66 +1,232 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# NGASAR - Sistem Pengaduan Sarana Prasarana
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![Laravel](https://img.shields.io/badge/Laravel-10.x-red.svg)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.1+-blue.svg)](https://php.net)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-## About Laravel
+Aplikasi web untuk mengelola pengaduan dan pemeliharaan sarana prasarana sekolah.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Multi-Role System**: Admin, Petugas, dan User
+- **Pengaduan Management**: Create, track, dan update status pengaduan
+- **Item & Lokasi Management**: Many-to-many relationship untuk item di multiple lokasi
+- **Real-time Notifications**: Sistem notifikasi untuk update status
+- **Responsive Design**: Mobile-friendly dengan Tailwind CSS
+- **API Ready**: REST API untuk integrasi mobile app
+- **CDN-based**: Tidak perlu npm build process
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 📋 Requirements
 
-## Learning Laravel
+- PHP 8.1 atau lebih tinggi
+- MySQL 5.7+ atau MariaDB 10.3+
+- Composer
+- Web Server (Apache/Nginx)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+**Tidak perlu Node.js/npm** - Project menggunakan Tailwind CSS dan Alpine.js via CDN
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## 🔧 Installation (Development)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Windows (Laragon)
 
-## Laravel Sponsors
+### Windows (Laragon)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+# Clone repository
+git clone https://github.com/RiizzzX/laravel-ukk.git
+cd laravel-ukk
 
-### Premium Partners
+# Install dependencies
+composer install
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+# Setup environment
+cp .env.example .env
+# Edit .env dengan database credentials
 
-## Contributing
+# Generate application key
+php artisan key:generate
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Run migrations dan seeder
+php artisan migrate
+php artisan db:seed --class=ItemListLokasiSeeder
 
-## Code of Conduct
+# Create storage link
+php artisan storage:link
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Start server
+php artisan serve
+```
 
-## Security Vulnerabilities
+Akses aplikasi di `http://localhost:8000`
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Linux (Production)
 
-## License
+Lihat panduan lengkap di [DEPLOYMENT_LINUX.md](DEPLOYMENT_LINUX.md)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+# Quick deployment
+bash deploy.sh
+```
+
+## 🔐 Default Login Credentials
+
+### Admin
+- Username: `admin`
+- Password: `admin123`
+
+### Petugas
+- Username: `petugas1`
+- Password: `petugas123`
+
+### User
+- Username: `user1`
+- Password: `user123`
+
+## 📱 API Documentation
+
+API documentation tersedia di [API_DOCUMENTATION.md](API_DOCUMENTATION.md)
+
+Base URL: `http://localhost:8000/api`
+
+### Authentication
+```bash
+POST /api/login
+POST /api/register
+POST /api/logout
+```
+
+### Pengaduan
+```bash
+GET    /api/pengaduan
+POST   /api/pengaduan
+GET    /api/pengaduan/{id}
+PUT    /api/pengaduan/{id}
+DELETE /api/pengaduan/{id}
+```
+
+## 🗂️ Project Structure
+
+```
+ukk-laravel-main/
+├── app/
+│   ├── Http/Controllers/     # Controllers
+│   │   ├── Api/              # API Controllers
+│   │   ├── AdminController.php
+│   │   ├── PetugasController.php
+│   │   └── PengaduanController.php
+│   ├── Models/               # Eloquent Models
+│   │   ├── Item.php
+│   │   ├── Lokasi.php
+│   │   ├── ListLokasi.php    # Pivot table model
+│   │   ├── Pengaduan.php
+│   │   └── User.php
+│   └── Observers/            # Model Observers
+├── database/
+│   ├── migrations/           # Database migrations
+│   └── seeders/              # Database seeders
+├── resources/
+│   └── views/                # Blade templates
+│       ├── admin/            # Admin views
+│       ├── petugas/          # Petugas views
+│       ├── pengaduan/        # User pengaduan views
+│       └── layouts/          # Layout templates
+├── routes/
+│   ├── web.php               # Web routes
+│   ├── api.php               # API routes
+│   └── auth.php              # Auth routes
+├── public/
+│   └── storage/              # Symbolic link to storage
+└── storage/
+    └── app/public/           # User uploaded files
+```
+
+## 🛠️ Technology Stack
+
+- **Backend**: Laravel 10.x
+- **Database**: MySQL 8.0
+- **Frontend**: Tailwind CSS 3.x (via CDN)
+- **JavaScript**: Alpine.js 3.x (via CDN)
+- **Authentication**: Laravel Sanctum
+- **Icons**: Heroicons (SVG inline)
+
+## 📝 Database Schema
+
+### Many-to-Many Relationship
+Project menggunakan **many-to-many relationship** untuk item dan lokasi:
+
+- `items` - Daftar item unik (1 Kursi, 1 AC, dst)
+- `lokasi` - Daftar lokasi/ruangan
+- `list_lokasi` - Pivot table (1 item bisa di multiple lokasi)
+
+Contoh:
+```
+Item "Kursi" (id=1) → tersedia di:
+  - Ruang Kelas 10-1
+  - Lab Komputer
+  - Perpustakaan
+```
+
+## 🧪 Testing
+
+```bash
+# Run tests
+php artisan test
+
+# Verify case sensitivity (before Linux deployment)
+bash verify-case-sensitivity.sh
+```
+
+## 🚀 Deployment
+
+### Production Checklist
+
+- [ ] Update `.env` dengan production config
+- [ ] Set `APP_DEBUG=false`
+- [ ] Set `APP_ENV=production`
+- [ ] Generate `APP_KEY`
+- [ ] Setup database credentials
+- [ ] Run migrations: `php artisan migrate --force`
+- [ ] Cache config: `php artisan config:cache`
+- [ ] Cache routes: `php artisan route:cache`
+- [ ] Cache views: `php artisan view:cache`
+- [ ] Set proper file permissions
+- [ ] Setup SSL certificate
+- [ ] Configure backup system
+
+Lihat panduan lengkap: [DEPLOYMENT_LINUX.md](DEPLOYMENT_LINUX.md)
+
+## 🐛 Troubleshooting
+
+### Case Sensitivity Issues (Linux)
+```bash
+# Verify model files
+ls -la app/Models/ | grep -i "listlokasi"
+# Should show: ListLokasi.php (not Listlokasi.php)
+
+# Clear cache
+php artisan cache:clear
+composer dump-autoload
+```
+
+### Permission Issues
+```bash
+sudo chown -R www-data:www-data storage bootstrap/cache
+sudo chmod -R 775 storage bootstrap/cache
+```
+
+### Database Connection Error
+- Check `.env` database credentials
+- Verify database exists: `mysql -u user -p -e "SHOW DATABASES;"`
+- Test connection: `php artisan tinker` → `DB::connection()->getPdo();`
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 👥 Contributors
+
+- [RiizzzX](https://github.com/RiizzzX)
+
+## 🙏 Acknowledgments
+
+Built with Laravel, Tailwind CSS, and Alpine.js.
