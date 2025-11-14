@@ -6,7 +6,11 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>{{ $title ?? config('app.name', 'Sarpras') }}</title>
 
-  @vite(['resources/css/app.css', 'resources/js/app.js'])
+  {{-- Tailwind CSS CDN --}}
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  {{-- Alpine.js CDN --}}
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="font-sans antialiased bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 min-h-screen">
 
