@@ -4,6 +4,8 @@ namespace App\Observers;
 
 use App\Models\Pengaduan;
 use App\Models\Notifikasi;
+use App\Models\Petugas; // Tambahkan ini
+use Illuminate\Support\Facades\Log; // Tambahkan ini untuk logging
 
 class PengaduanObserver
 {
@@ -86,24 +88,35 @@ class PengaduanObserver
         // Check if petugas assigned (when admin assigns or petugas takes the task)
         if ($pengaduan->isDirty('id_petugas') && $pengaduan->id_petugas) {
             // Notify assigned PETUGAS
-            Notifikasi::createNotification(
-                $pengaduan->id_petugas,
-                'pengaduan_ditugaskan',
-                'Pengaduan Ditugaskan ke Anda',
-                'Anda ditugaskan untuk menangani pengaduan #' . $pengaduan->id_pengaduan,
-                route('petugas.pengaduan.index'),
-                $pengaduan->id_pengaduan
-            );
+            // Ambil petugas dan user-nya
+            $petugas = Petugas::with('user')->find($pengaduan->id_petugas);
+            
+            if ($petugas && $petugas->user && $petugas->user->id_user) {
+                Log::info('PengaduanObserver: Notifying petugas user_id=' . $petugas->user->id_user);
+                
+                Notifikasi::createNotification(
+                    $petugas->user->id_user,
+                    'pengaduan_ditugaskan',
+                    'Pengaduan Ditugaskan ke Anda',
+                    'Anda ditugaskan untuk menangani pengaduan #' . $pengaduan->id_pengaduan,
+                    route('petugas.pengaduan.index'),
+                    $pengaduan->id_pengaduan
+                );
+            } else {
+                Log::warning('PengaduanObserver: Cannot notify petugas - User not found for id_petugas: ' . $pengaduan->id_petugas);
+            }
             
             // Notify USER that petugas has been assigned
-            Notifikasi::createNotification(
-                $pengaduan->id_user,
-                'pengaduan_petugas_ditugaskan',
-                'Petugas Ditugaskan',
-                'Pengaduan #' . $pengaduan->id_pengaduan . ' Anda telah ditangani oleh petugas.',
-                route('pengaduan.riwayat'),
-                $pengaduan->id_pengaduan
-            );
+            if ($pengaduan->id_user) {
+                Notifikasi::createNotification(
+                    $pengaduan->id_user,
+                    'pengaduan_petugas_ditugaskan',
+                    'Petugas Ditugaskan',
+                    'Pengaduan #' . $pengaduan->id_pengaduan . ' Anda telah ditangani oleh petugas.',
+                    route('pengaduan.riwayat'),
+                    $pengaduan->id_pengaduan
+                );
+            }
         }
     }
 

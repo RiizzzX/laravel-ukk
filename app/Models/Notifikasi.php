@@ -35,6 +35,14 @@ class Notifikasi extends Model
     // Helper method untuk membuat notifikasi
     public static function createNotification($userId, $tipe, $judul, $isi, $link = null, $refId = null)
     {
+        // Verify user exists before creating notification
+        $userExists = User::where('id_user', $userId)->exists();
+        
+        if (!$userExists) {
+            \Log::warning("Notifikasi: Cannot create notification for non-existent user_id: {$userId}");
+            return null;
+        }
+        
         return self::create([
             'id_user' => $userId,
             'tipe' => $tipe,

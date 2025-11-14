@@ -173,7 +173,7 @@ class PetugasController extends Controller
             
         } elseif ($pengaduan->status === 'diproses') {
             // Cek apakah ini pengaduan milik petugas yang login
-            if ($pengaduan->id_petugas !== $petugas->id_petugas) {
+            if ($pengaduan->id_petugas != $petugas->id_petugas) {
                 return back()->with('error', 'Pengaduan ini sedang dikerjakan petugas lain');
             }
         } else {

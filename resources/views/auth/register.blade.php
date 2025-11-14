@@ -103,7 +103,7 @@
         </div>
         <input type="password" name="password" required
           class="w-full pl-12 pr-4 py-3.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-200 transition-all"
-          placeholder="Minimal 8 karakter">
+          placeholder="Minimal 6 karakter">
       </div>
       @error('password')<p class="text-xs text-red-600 mt-2 flex items-center gap-1"><span>⚠️</span>{{ $message }}</p>@enderror
     </div>
