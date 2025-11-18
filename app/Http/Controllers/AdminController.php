@@ -24,7 +24,7 @@ class AdminController extends Controller
                 'countItems'        => Item::count(),
                 'countLokasi'       => Lokasi::count(),
                 'countPengaduan'    => Pengaduan::where('tipe_pengaduan', 'normal')->count(),
-                'users'             => User::where('role', 'pengguna')->orderBy('created_at', 'desc')->get(),
+                'users'             => User::orderBy('created_at', 'desc')->get(),
                 'petugas'           => Petugas::whereHas('user', function($q) { $q->where('role', 'petugas'); })->orderBy('created_at', 'desc')->get(),
                 'items'             => Item::with('listLokasi.lokasi')->orderBy('created_at', 'desc')->get(),
                 'lokasi'            => Lokasi::orderBy('created_at', 'desc')->get(),

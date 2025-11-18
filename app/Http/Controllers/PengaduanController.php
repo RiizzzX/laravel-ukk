@@ -115,9 +115,7 @@ class PengaduanController extends Controller
         // Handle file upload
         $filename = null;
         if ($request->hasFile('foto')) {
-            $file = $request->file('foto');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/pengaduan'), $filename);
+              $filename = $request->file('foto')->store('pengaduan', 'public');
         }
         
         if ($isTemporary) {

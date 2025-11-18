@@ -125,7 +125,7 @@
               <th class="text-left px-6 py-4 text-sm font-semibold text-yellow-900">Lokasi</th>
               <th class="text-left px-6 py-4 text-sm font-semibold text-yellow-900">Deskripsi</th>
               <th class="text-left px-6 py-4 text-sm font-semibold text-yellow-900">Tanggal</th>
-              <th class="text-left px-6 py-4 text-sm font-semibold text-yellow-900">Bukti</th>
+              <th class="text-left px-6 py-4 text-sm font-semibold text-yellow-900">Bukti User</th>
               <th class="text-left px-6 py-4 text-sm font-semibold text-yellow-900">Aksi</th>
             </tr>
           </thead>
@@ -197,6 +197,7 @@
               <th class="text-left px-6 py-4 text-xs font-semibold text-emerald-700 uppercase tracking-wider">Status</th>
               <th class="text-left px-6 py-4 text-xs font-semibold text-emerald-700 uppercase tracking-wider">Petugas</th>
               <th class="text-left px-6 py-4 text-xs font-semibold text-emerald-700 uppercase tracking-wider">Tanggal</th>
+              <th class="text-left px-6 py-4 text-xs font-semibold text-emerald-700 uppercase tracking-wider">Bukti Petugas</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100">
@@ -221,10 +222,22 @@
                   {{ $p->petugas->nama_petugas ?? '-' }}
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-500">{{ $p->created_at->format('d M Y') }}</td>
+                <td class="px-6 py-4">
+                  @if($p->status == 'selesai' && $p->foto_penyelesaian)
+                    <img src="{{ asset('storage/'.$p->foto_penyelesaian) }}"
+                         alt="Foto Bukti Penyelesaian Petugas"
+                         class="w-16 h-16 object-cover rounded-lg cursor-pointer hover:opacity-80 hover:scale-105 transition-all shadow-md border-2 border-emerald-200"
+                         onclick="showImageModal('{{ asset('storage/'.$p->foto_penyelesaian) }}')"
+                         onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23e5e7eb%22 width=%22100%22 height=%22100%22/%3E%3Ctext fill=%22%23999%22 font-size=%2212%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22%3EGambar%3C/text%3E%3Ctext fill=%22%23999%22 font-size=%2212%22 x=%2250%25%22 y=%2265%25%22 text-anchor=%22middle%22%3ETidak Ada%3C/text%3E%3C/svg%3E'; this.classList.remove('cursor-pointer','hover:scale-105');"
+                         title="Klik untuk memperbesar">
+                  @else
+                    <span class="text-xs text-gray-400 italic">Tidak ada</span>
+                  @endif
+                </td>
               </tr>
             @empty
               <tr>
-                <td colspan="7" class="text-center px-6 py-12 text-gray-400">
+                <td colspan="8" class="text-center px-6 py-12 text-gray-400">
                   <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                   <p class="font-medium">Belum ada riwayat</p>
                 </td>
@@ -294,9 +307,9 @@
             Kelola
           </a>
         </div>
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto max-h-96 overflow-y-auto">
           <table class="w-full border-collapse">
-            <thead class="bg-purple-100">
+            <thead class="bg-purple-100 sticky top-0">
               <tr>
                 <th class="text-left p-3 text-sm font-semibold text-purple-900">ID</th>
                 <th class="text-left p-3 text-sm font-semibold text-purple-900">Username</th>

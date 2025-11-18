@@ -152,10 +152,10 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 @if($item->foto)
-                  <img src="{{ asset('uploads/pengaduan/' . $item->foto) }}" 
-                       alt="Foto Bukti" 
+                  <img src="{{ asset('storage/' . $item->foto) }}"
+                       alt="Foto Bukti"
                        class="w-16 h-16 object-cover rounded-lg cursor-pointer hover:opacity-80 hover:scale-105 transition-all shadow-md border-2 border-purple-200"
-                       onclick="showImageModal('{{ asset('uploads/pengaduan/' . $item->foto) }}')"
+                       onclick="showImageModal('{{ asset('storage/' . $item->foto) }}')"
                        onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22%3E%3Crect fill=%22%23e5e7eb%22 width=%22100%22 height=%22100%22/%3E%3Ctext fill=%22%23999%22 font-size=%2212%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22%3EGambar%3C/text%3E%3Ctext fill=%22%23999%22 font-size=%2212%22 x=%2250%25%22 y=%2265%25%22 text-anchor=%22middle%22%3ETidak Ada%3C/text%3E%3C/svg%3E'; this.classList.remove('cursor-pointer','hover:scale-105');"
                        title="Klik untuk memperbesar">
                 @else
